@@ -3,8 +3,6 @@ from settings import MEDIA_ROOT
 from django.views.static import serve
 from django.views.generic.simple import direct_to_template
 
-import trevor
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()

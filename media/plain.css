@@ -22,7 +22,7 @@ body {
 }
 
 div#logo {
- margin: 0;
+ margin: 10px 0 0 0;
  padding: 0;
 }
 
@@ -298,9 +298,17 @@ h1, h2, h3, h4 {
 }
 
 .prediction-panel {
- width: 20em;
- border: solid lightgrey 6px;
+ width: 270px;
  padding: 0
+}
+
+.prediction-panel,
+#main div.panel {
+ border: solid lightgrey 6px;
+ -moz-border-radius: 12px;
+ -webkit-border-radius: 12px;
+ border-radius: 12px;
+
 }
 
 .prediction-panel ol{

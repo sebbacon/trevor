@@ -39,7 +39,7 @@ def parseTable(year):
 
 
 def parsePremierTeams():
-    url = URL_TEMPLATE % ("2009", "10")
+    url = URL_TEMPLATE % ("2010", "11")
     request = urllib2.Request(url)
     request.add_header("User-Agent",
                        "WhateverTrevor/0.1 +http://whatevertrevor.com")
@@ -57,6 +57,8 @@ def parsePremierTeams():
     return teams
     
 def parseChampionship():
+
+    tid = "History_of_the_current_24_clubs_in_the_Championship_.282010.E2.80.9311_season.29"    
     url = "http://en.wikipedia.org/wiki/Football_League_Championship"
     request = urllib2.Request(url)
     request.add_header("User-Agent",
@@ -65,7 +67,7 @@ def parseChampionship():
     opener = urllib2.build_opener()
     page = opener.open(request).read() 
     soup = BeautifulSoup(page)
-    anchor = soup.find(True, {"id":"Football_League_Championship_clubs_2009.E2.80.9310"})
+    anchor = soup.find(True, {"id":tid})
     table = anchor.findAllNext("table")
     teams = []
     for row in table[0].findAll("tr")[1:]:

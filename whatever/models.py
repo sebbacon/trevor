@@ -482,6 +482,7 @@ class Prediction(Model):
                 competition=self.competition)
         else:
             current_table = getCurrentTable()
+        score = 0
         if force or self.needs_update or current_table != self.last_used_table:
             count = 0
             score = 0
