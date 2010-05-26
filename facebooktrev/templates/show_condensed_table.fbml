@@ -1,0 +1,22 @@
+<div class="box">
+   <h3>League position for <fb:name uid="{{uid}}" /></h3>
+{% if can_show_full_table %}
+  <div class="subtitle"><a href="?full=1">See full table</a></div>
+{% endif %}
+   <table class="league-table">
+    <tr>
+     <th>Pos</th>
+     <th>Pts</th>
+     <th>GD</th>
+     <th>Who</th>
+    </tr>
+   {% for p in user.user.position_in_context %}
+    <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user user.user %} myrow{% endifequal %}">
+      <td>{{ p.current_position }}</td>
+      <td>{{ p.score }}</td>
+      <td>{{ p.goaldiff }}</td>
+      <td>{{ p.user.display_name }}</td>
+    </tr>
+   {% endfor %}
+   </table>
+</div>

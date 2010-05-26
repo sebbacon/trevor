@@ -1,0 +1,183 @@
+li.distance-0 {
+ background-color: #77ff11;
+}
+li.distance-1 {
+ background-color: #aaff66;
+}
+li.distance-2 {
+ background-color: #ccffaa;
+}
+li.distance-3 {
+ background-color: #ddffcc;
+}
+
+
+#current-actual-table {
+ display: none;
+ position: absolute;
+ background-color: white;
+}
+
+#current-actual-table li {
+ background-color: white;
+}
+
+div#tabs .title {
+ font-size: 1.3em;
+ color: black;
+ display: block;
+}
+
+div#tabs .summary-data {
+ font-size: 0.9em;
+ color: #777dc4;
+}
+
+div#tabs a {
+ outline: none;
+}
+
+div.competition {
+ margin: 0;
+ padding: 0 ! important;
+}
+
+div.competition div {
+ background-color: white;
+}
+
+div.competition-text {
+ padding: 5px;
+}
+div.competition .tab {
+ background-color: lightgray;
+ padding: 2px;
+ margin: 0;
+}
+
+div.competition h3 a {
+ color: black;
+ text-decoration: none;
+}
+
+div.competition img.meter {
+ float: right;
+}
+
+div.meter {
+ float: right;
+ width: 100px;
+ height: 50px;
+}
+
+div.competition p {
+ margin-top: 0.5em;
+}
+
+.ui-tabs .ui-tabs-hide {
+     display: none;
+}
+.change-selection {
+ line-height: 2em;
+}
+
+.primary.button {
+ color:green;
+}
+span.current-notice {
+ font-size: 1.8em;
+ font-weight: bold;
+ line-height: 1em;
+}
+
+div.competition hr.clearfix {
+ margin: 15px 0 0 0;
+
+}
+div.competition div.actions {
+ margin: 4px 0 0 0;
+ padding: 8px 0 8px 4px;
+ background: lightgray;
+}
+
+div.competition div.topactions {
+ margin: 4px 0 0 0;
+ padding: 8px 0 8px 4px;
+}
+
+div.panel {
+ border: 2px solid lightgray;
+ padding: 4px;
+}
+
+body {
+ background: #777dc4;
+}
+
+div#white-bg {
+ background-color: #fff;
+}
+div.competition div.league-table {
+ width: 80%;
+ border: 2px solid lightgray;
+ padding: 4px;
+ color: #777;
+}
+div.competition div.league-table h3 {
+ color: #666;
+ padding-bottom: 3px;
+}
+p.teaser {
+ font-size: 1.5em;
+
+}
+
+a#show-current, a#show-selection {
+ cursor: pointer;
+ cursor: hand;
+}
+
+.staticprediction {
+ background-color: lightgray;
+ border: solid darkgray 1px;
+ padding: 6px;
+ font-size: 0.8em;
+ z-index: 1;
+ color: #1e2038;
+ float: left;
+ margin: 10px;
+ list-style-position: inside; 
+}
+
+span.change {
+ color: #777dc4;
+}
+
+img.change-arrow {
+ vertical-align: middle;
+}
+
+a.button {
+ padding: 4px;
+ text-decoration: none;
+}
+
+
+#header ul li,
+#header ul li a {
+ font-size: 1.5em;
+ color: white;
+}
+
+#header ul li a {
+ margin-right: 8px;
+}
+
+#header ul li a:hover {
+ text-decoration: underline;
+}
+
+div.titleheader {
+ margin-top: 10px;
+ margin-bottom: 10px;
+}

@@ -1,0 +1,15 @@
+Hi {{ league.owner.display_name }},
+
+{{ user.display_name }} <{{user.email}}> wants to join {{ league.name }}.
+
+To approve them, click here:
+
+ http://{{site}}{% url approve_league_application league=league.slug email=user.email %}
+
+To refuse the application, click here:
+
+ http://{{site}}{% url reject_league_application league=league.slug email=user.email %}
+
+Thanks,
+
+Trev

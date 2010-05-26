@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="titleheader">
+<h1>{{ competition.name }}</h1>
+<h2>Predict the table at {{ competition.competition_date|date:"H:m" }} on {{ competition.competition_date|date:"jS F" }}. {{ competition.upcoming_fixtures.count }} fixtures will be played between now and then.</p>
+ </h2>
+ <p><a href="{% url logged_in %}">Back to competition summary</a></p>
+</div>
+<div class="row">
+ <div class="span-1">
+  <div class="panel">
+   {% if entered %}
+   <h2>My selection</h2>
+   <p>The greener it is, the closer your selection is to current reality</p>
+   <div id="personal-selection">
+    <ol>
+    {% for p in prediction.decorated_teams %}
+     <li class="distance-{{p.diff}}">{{ p.name }}</li>
+    {% endfor %}
+    </ol>
+   <p class="red">
+    Your points: <strong>{{ prediction.score }}</strong><br />
+    Your goal diff: <strong>{{ prediction.goaldiff }}</strong>
+    <br />
+    {% if competition.is_open %}
+     <a href="{% url make_prediction competition=competition.pk %}">Change selection</a>
+    {% endif %}
+   </p>
+   </div>
+    {% if competition.is_finished %}
+     <div id="current-actual-table">
+      <button id="show-selection">see my selection</button><br />
+      <ol>
+      {% for p in final.ordered_teams.all %}
+       <li>{{ p.name }}</li>
+      {% endfor %}
+      </ol>
+     </div>
+    {% else %}
+     <div id="current-actual-table">
+      <button id="show-selection">see my selection</button><br />
+      <ol>
+      {% for p in current.ordered_teams.all %}
+       <li>{{ p.name }}</li>
+      {% endfor %}
+      </ol>
+     </div>
+    {% endif %}
+   {% else %}
+    {% if competition.is_open %}
+    <h2>Current table</h2>
+     <div>
+      <ol>
+      {% for p in current.ordered_teams.all %}
+       <li>{{ p.name }}</li>
+      {% endfor %}
+      </ol>
+      <p class="red">
+       <a href="{% url make_prediction competition=competition.pk %}">make a selection</a>
+      </p>
+     </div>
+
+    {% else %}
+     This competition is closed.  
+     {% if competition.is_finished %}
+     Here's how it finished:
+     <ol>
+     {% for p in final.ordered_teams.all %}
+      <li>{{ p.name }}</li>
+     {% endfor %}
+     </ol>
+     {% endif %}
+    {% endif %}
+   {% endif %}
+  </div>
+ </div>
+ <div class="span-2 last">
+  <div class="panel">
+  <h2>{% if entered %}My league position{% else %}League{% endif %}</h2>
+   <table class="league-table">
+    <tr>
+     <th>Pos</th>
+     <th>Pts</th>
+     <th>GD</th>
+     <th>Entered</th>
+     <th>Who</th>
+    </tr>
+   {% for p in predictions %}
+    <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user request.user %} myrow{% endifequal %}">
+      <td>{{ p.current_position }} {% if p.direction_change %}<span class="change"><img src="{{ MEDIA_URL }}{{p.direction_change}}.png" />{{ p.abs_change_on_last_position }}</span>{% endif %}
+</td>
+      <td>{{ p.score }}</td>
+      <td>{{ p.goaldiff }}</td>
+      <td>{{ p.edited_date|date:"d/m/y" }}</td>
+      <td>{{ p.user.display_name }}</td>
+    </tr>
+   {% endfor %}
+   </table>
+  <p><a href="{% url table competition=competition.pk %}">See full table</a></p>
+  </div>
+ <div class="panel" style="margin-top: 30px">
+  <h2>{% if entered %}My{% else %}Current winner's{% endif %} league performance</h2>
+  <div id="performancechart" style="width: 360px"></div>
+  <p>There are {{ competition.upcoming_fixtures.count }} fixtures yet to be played between now and the competition date.</p>
+  </div>
+ </div>
+<!--
+{% if entered %}
+ <div class="span-1 last">
+  <div class="panel">
+  <h2>Me v. my friends</h2>
+   <table class="league-table">
+    <tr>
+     <th>Pos</th>
+     <th>Pts</th>
+     <th>GD</th>
+     <th>Date of entry</th>
+     <th>Who</th>
+    </tr>
+   {% for p in predictions %}
+    <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user request.user %} myrow{% endifequal %}">
+      <td>{{ p.current_position }}</td>
+      <td>{{ p.score }}</td>
+      <td>{{ p.goaldiff }}</td>
+      <td>{{ p.edited_date|date:"d/m @H:i" }}</td>
+      <td>{{ p.user.display_name }}</td>
+    </tr>
+   {% endfor %}
+   </table>
+  <p><a href="{% url table competition=competition.pk %}">See full table</a></p>
+  </div>
+ </div>
+{% endif %}
+-->
+
+
+</div>
+{% endblock %}
+
+
+{% block extra-head %}
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["imagesparkline"]});
+google.setOnLoadCallback(drawChart);
+
+function drawChart() {
+ var data = new google.visualization.DataTable();
+        data.addColumn("number", "Position");
+        data.addRows({{prediction.positions.count}});
+        {% for position in prediction.positions.all %}
+        data.setValue({{ forloop.counter0}},0,{{position.invert_position}});
+        {% endfor %}
+        var chart = new google.visualization.ImageSparkLine(document.getElementById('performancechart'));
+        chart.draw(data, {width: 360, height: 100, showValueLabels: false});
+}
+
+</script>
+{% endblock %}

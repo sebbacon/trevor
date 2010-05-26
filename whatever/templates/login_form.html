@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+
+<div class="span-3">
+ <div class="panel">
+  <h2>Login</h2>
+  {% if error %}
+   <div class="error">{{ error }}</div>
+  {% endif %}
+  <form method="post">
+    <table>
+     <tr>
+       <th>Email address</th>
+       <td><input type="text" name="email" /></td>
+     </tr>
+     <tr>
+       <th>Password</th>
+       <td><input type="password" name="password" /><br />
+           <a href="{% url reset_password_request %}" class="red">I've forgotten my password!</a>
+       </td>
+     </tr>
+     <tr>
+       <td></td>
+       <td><input type="submit" name="login" /></td>
+     </tr>
+    </table>
+  </form>
+			 
+ </div>
+</div>
+
+
+{% endblock %}
+

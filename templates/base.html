@@ -1,0 +1,145 @@
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:fb="http://www.facebook.com/2008/fbml"
+    xml:lang="{% firstof LANGUAGE_CODE 'en' %}"
+    lang="{% firstof LANGUAGE_CODE 'en' %}">
+  <head>
+    <title>{% block title %}{% endblock %} - WhatEverTrevor</title>
+    {% block css %}
+      <link rel="icon" type="image/x-icon" href="{{ MEDIA_URL }}favicon.ico" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}screen.css" type="text/css" media="screen, projection"/>
+      <link rel="stylesheet" href="{{ MEDIA_URL }}print.css" type="text/css" media="print"/>
+<!--[if IE]><link rel="stylesheet" href="{{ MEDIA_URL }}ie.css" type="text/css" media="screen, projection"/><![endif]-->
+      <link rel="stylesheet" type="text/css"  media="screen" href="{{ MEDIA_URL }}jquery-ui-1.8.custom.css" />
+      <link rel="stylesheet" type="text/css"  media="screen" href="{{ MEDIA_URL }}main.css" />
+      <link rel="stylesheet" type="text/css"  media="screen" href="{{ MEDIA_URL }}common.css" />
+    {% endblock %}
+    {% block js %}
+    {% if OFFLINE %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}jquery-1.4.2.min.js"></script>
+    {% else %}
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+    {% endif %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}code.js"></script>
+    {% endblock %}
+    <meta name="description" content="Football game. Free to play. Top prize &pound;1million.  Register now to secure your place in the next game" />
+    <meta name="keywords" content="whatever trever, football, game, prize, soccer, premiership, predict, league, one million pounds" />
+
+    {% block extra-head %}
+     <meta name="robots" content="noindex" />
+    {% endblock %}
+  </head>
+
+  <body id="section-{% block section %}home{% endblock %}">
+    <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_US" type="text/javascript"></script>
+    {% block header %}
+
+    {% if user.is_anonymous %}
+    <div id="loginform" class="panel">
+     <form method="post" action="{% url login %}">
+      <table>
+       <tr>
+        <th><label for="email">Email</label></th>
+        <td><input type="text" name="email" /></td>
+       </tr>
+       <tr>
+        <th><label for="password">Password</label></th>
+        <td><input type="password" name="password" /><br />
+            <a href="{% url reset_password_request %}" class="red">I've forgotten my password!</a>
+</td>
+       </tr>
+       <tr>
+        <td></td>
+        <td><input type="submit" class="bigsubmit" name="login" value="login" /></td>
+       </tr>
+      </table>
+     </form>
+    </div>
+    {% endif %}
+
+    <div id="header" class="container">
+
+     <div id="logo" class="span-3 last">
+      <h1><a href="/"><img src="{{ MEDIA_URL }}logo.png" width="611" height="58" /></a></h1>
+     </div>
+
+     <div id="pages" class="span-2">
+      <ul>
+    {% block home %}
+      {% if user.is_authenticated %}
+        <li><a href="{% url logged_in %}">My account</a></li>
+      {% else %}
+        <li><a href="/">Home</a></li>
+      {% endif %}
+    {% endblock %}
+    {% block navigation %}
+    {% endblock %}
+       </ul>
+     </div>
+     <div id="actions" class="span-1 last">
+      {% block actions %}
+      <ul>
+       {% if user.is_anonymous %}
+       <li id="loginlink"><a href="">Sign in</a></li>
+       {% else %}
+       <li>Hi, {{ user.display_name }} <a href="{% url logout %}">Sign out</a></li>
+       {% endif %}
+      </ul>
+      {% endblock %}
+     </div>
+
+    </div>
+       
+    {% endblock %}
+
+
+    <div id="main" class="container">
+{% if not user.is_anonymous %}
+ {% if not user.is_active %}
+  <div class="span-3 last"><p class="notice">You've not confirmed your email address yet.  Please check your inbox (and your spam folder) for a confirmation email.</p></div>
+ {% endif %}
+{% endif %}
+{% if request.GET.notice %}
+ <div class="span-3"><p class="notice">{{ request.GET.notice }}</p></div>
+{% endif %}
+{% if request.GET.error %}
+ <div class="span-3"><p class="error">{{ request.GET.error }}</p></div>
+{% endif %}
+
+   {% block content %}
+
+   
+   {% endblock %}
+
+    </div>
+
+    <div id="footer" class="container">
+     <div id="sponsors" class="span-2">
+      {% block sponsors %}
+      {% endblock %}
+     </div>
+     <div id="bottom-nav">
+      <ul>
+        {% block extrabottomnav %}
+        {% endblock %}
+        {% for page in pages %}
+        <li{% if forloop.last %} class="lastnav"{% endif %}><a href="{{ page.url }}">{{ page.title }}</a></li>
+        {% endfor %}
+      </ul>
+     </div>
+    </div>
+    <div id="endnotes" class="container">
+      <div>
+       <a href="/privacy/">Privacy</a> | <a href="/terms/">Terms</a>
+      </div>
+    </div>
+   <script type="text/javascript">
+    {% block fbjs %}
+     FB.init("{{ settings.FACEBOOK_API_KEY }}", "/xd_receiver.htm");
+    {% endblock %}
+   </script>
+  </body>
+</html>

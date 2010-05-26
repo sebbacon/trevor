@@ -1,0 +1,32 @@
+{% load pagination_tag %}
+
+<div class="box">
+   <h3>WhatEverTrevor's league</h3>
+
+<table class="league-table">
+ <tr>
+  <th>Position (change)</th>
+  <th>Score</th>
+  <th>Goal Difference</th>
+  <th>Selected by</th>
+ </tr>
+
+{% url table as current_url %}
+{% paginate full_table_url predictions current_page 15 7 paged_predictions %}
+
+{% for p in paged_predictions %}
+ <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user user.user %} myrow{% endifequal %}">
+   <td>{{ p.current_position }} ({{ p.change_on_last_position }}) <span class="mini-sparkline" id="{{ p.user.email }}"></span>
+</td>
+   <td>{{ p.score }}</td>
+   <td>{{ p.goaldiff }}</td>
+   <td>{{ p.user.display_name }}</td>
+ </tr>
+{% endfor %}
+</table>
+
+</div>
+
+{% include "facebookpagination.html" %}
+
+

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="titleheader">&nbsp;</div>
+<div class="span-1 hometext">
+ {% if competition.prize %}<h1>{{ competition.prize }}</h1>{% endif %}
+ <h2>How will the Premier League table look on {{ competition.competition_date|date:"jS F Y"}}?</h2>
+ <p>Think you can do better than the other {{ competition.prediction_set.count }} people currently playing?</p>
+ <p><strong>Drag and drop the teams on the right to make your selection.</strong></p>
+ <h3>100% free to play.</h3>
+</div>
+<div class="span-1">
+ <div class="prediction-panel">
+ <p>
+ {% if form %}
+  <form action="" method="post" id="signup">
+    {{ form.prediction }}
+    <input class="bigsubmit" type="submit" value="submit" />
+  </form>
+ {% endif %}
+ </p>
+
+ </div>
+</div>
+
+<div class="span-1 last">
+ <div class="panel">
+ <h2>Current leader board</h2>
+<table class="league-table">
+ <tr>
+  <th></th>
+  <th>name</th>
+  <th>PTS</th>
+  <th>GD</th>
+ </tr>
+{% for p in predictions %}
+ <tr class="{% cycle 'odd' 'even' %}">
+   <td>{{ forloop.counter }}</td>
+   <td>{{ p.user.display_name }}</td>
+   <td>{{ p.score }}</td>
+   <td>{{ p.goaldiff }}</td>
+ </tr>
+{% endfor %}
+ </table>
+ </div>
+</div>
+
+{% endblock %}
+
+{% block sponsors %}
+{% endblock %}

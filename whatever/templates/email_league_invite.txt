@@ -1,0 +1,17 @@
+Hi,
+
+{% if user.current_prediction %}{{ league.owner.display_name }} has invited you to join a league on WhatEverTrevor called {{ league.name }}.
+{% else %}{{ league.owner.display_name }} thinks you might like to compete against them in WhatEverTrevor, a simple football game with a £1million prize.
+{% endif %}
+
+If you'd like to join, please click here:
+
+ http://{{site}}{% url accept_league_invite league=league.slug key=profile.activation_key %}
+
+If you don't want to join, please click here:
+
+ http://{{site}}{% url decline_league_invite league=league.slug key=profile.activation_key %}
+
+Thanks,
+
+Trev

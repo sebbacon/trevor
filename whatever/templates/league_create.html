@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Create a league{% endblock %}
+
+{% block content %}
+
+{{ form.errors }}
+
+<div class="span-3 last">
+ <div class="panel">
+ <h3>You made a league</h3>
+ <p>Well done, pal.</p>
+ {{ request.user.leagues }}
+ </div>
+</div>
+
+
+
+{% endblock %}

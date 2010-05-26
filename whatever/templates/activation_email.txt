@@ -1,0 +1,11 @@
+Hi {{ user.display_name }},
+
+Thanks for your entry to WhatEverTrevor.
+
+Please confirm your email address by logging in here:
+
+http://{{ site }}{% url activate key=activation_key %}
+
+Thanks,
+
+WhatEverTrevor

@@ -1,0 +1,158 @@
+
+
+/*
+Theme Name: Grid-A-Licious(tm)
+Theme URI: http://www.suprb.com/grid-a-licious/
+Version: 1.0
+Author: <a href="http://www.suprb.com">(c) 2008 Suprb</a>
+*/
+
+body {			background-color:#17172c;
+				color:#BBBBE2;
+				font-family: Arial, sans-serif;
+				font-size:12px;
+				line-height: 14px;
+				padding:25px;
+				margin:0px;	}
+
+a {	color:#ffffff; font-family: Arial black, sans-serif; font-size:16px; text-decoration:none; }
+
+a:hover	{ color:#cc0000; text-decoration:none; }
+
+.round { 		background-color:2c2c4f;
+				-moz-border-radius:3px;
+  				-khtml-border-radius: 3px;
+				-webkit-border-radius:3px;
+				padding: 10px;
+				width: 200px;
+				float: left;
+				margin-right: 10px; }
+
+.contentIndex p img { display:none; }
+
+.eachpost { 	background-color:#2c2c4f;
+				-moz-border-radius:3px;
+  				-khtml-border-radius: 3px;
+				-webkit-border-radius:3px;
+				position:absolute;	}
+			
+.eachpost > div { padding:10px; }
+	
+.eachpost .author { padding-right: 3em; }
+
+.author, .comment { text-decoration:none; }
+
+.eachpost .signature { margin-top:1.5em; }
+	
+#allposts { margin-bottom:60px; }
+
+il, ul, ol { list-style-type: none; list-style: none; }
+
+#menuItem { height: 50px; }
+
+#mainContent img { display: none }
+#mainContent {  -moz-border-radius:3px;
+				-webkit-border-radius:3px;
+  				-khtml-border-radius: 3px;
+				border: 0;
+				background: #fff;
+				padding: 0 10px;
+				margin-right: 10px;
+				margin-bottom: 10px;
+				width: 430px;
+				float: left;
+}
+.main { font-size: 0px !important; }
+.main p img {	-moz-border-radius:3px;
+				-webkit-border-radius:3px;
+				border: 0;
+				background: #fff;
+				padding: 10px;
+				margin-right: 10px;
+				margin-bottom: 10px;
+				display: inline; }
+
+.twocols { background: #17172c }
+.threecols { background: #17172c }
+
+input, textarea, select, button{
+				background-color:#2c2c4f;
+				-moz-border-radius:3px;
+  				-khtml-border-radius: 3px;
+				-webkit-border-radius:3px;
+				padding: 3px;
+				border:0px;
+				margin-top: 5px;
+				color:#BBBBE2;
+				font-size:11px;
+				font-family: Arial, sans-serif; }
+				
+textarea { width: 420px; padding: 5px; }
+
+input { padding: 5px; width: 420px; }
+
+.bubble { width: 430px; margin-bottom: 10px; }
+
+.bubble blockquote { background: #fff;
+				margin: 0px;
+   				-moz-border-radius: 3px;
+  				-khtml-border-radius: 3px;
+  				-webkit-border-radius: 3px;
+				padding: 3px;
+				background:#2c2c4f; }
+
+.bubble blockquote p { margin: 3px; padding: 0px; }
+
+.bubble cite { 	position: relative;
+				margin: -7px;
+				padding: 7px 0px 13px 18px;
+				top: 5px;
+				background: transparent;
+				font-style: normal;
+				display: block; }
+
+.commentmetadata { margin: 0; display: block; }
+
+#commentBox a { text-decoration: none; }
+
+small a { text-decoration: none; }
+
+a.more-link, small a {
+ font-size: 1em;
+ font-weight: normal;
+}
+
+h1 {
+ color:#ffffff; 
+ font-family: Arial black, sans-serif; 
+ font-size:16px;
+}
+
+div.published {
+ font-style: italic;
+ margin-bottom: 100px;
+}
+
+div#signup input {
+ background-color: #fff;
+ color: #17172C;
+ width: 140px;
+ display: inline;
+ margin: 0;
+}
+
+div#signup input#subscribe {
+ width: 40px;
+ background-color: #BBBBE2;
+}
+
+div#signup input#subscribe:hover {
+ background-color: #AAAAE2;
+ cursor: pointer;
+ cursor: hand;
+}
+
+div#signup {
+ padding: 4px;
+ padding-left: 8px;
+}

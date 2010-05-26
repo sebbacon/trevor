@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{% if league %}Edit league{% else %}Make a league{% endif %}{% endblock %}
+
+{% block content %}
+
+<div class="span-3 last">
+ <div class="panel">
+ {% if league %}
+  <h3>Edit {{ league.name }}</h3>
+  <p>Current members:</p>
+  <ul>
+    {% for member in league.members %}
+     <li>{{ member.display_name}}</li>
+    {% endfor %}
+  </ul>
+  <p>Invite more members:</p>
+ {% else %}
+  <h3>Make a league</h3>
+
+  <p>Enter a valid email address for each person you wish to invite
+  into your new league, then click submit - we'll do the rest.  People
+  you invite do not have to be registered at WhatEverTrevor.</p>
+
+ {% endif %}
+ <form method="post" id="add-league">
+  {% if form.non_field_errors %}
+   <div class="error">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+
+  {% if form.fields.join_leagues.choices %}
+  <div class="notice span-2">
+   {% with form.join_leagues as field %}
+   <h3>We've found some leagues you might want to join</h3>
+   <p>Some of your friends are in the following leagues. 
+   Instead of {% if league %}inviting them to your league{% else %}
+   making a new league{% endif %}, you might want to join them there.</p>
+     <label for="id_{{ field.name }}">Tick the leagues you'd like to join:</label>{{ field }}
+   {% endwith %}
+     <input type="submit" name="join" value="Yes, I'll join these leagues" />
+     <input type="submit" name="yes_really" value="No thanks, I'd like to make a new league anyway" />
+   </div>
+   {% endif %}
+ 
+  <table class="form-type-1">
+   {% with form.name as field %}
+   <tr class="field_{{ field.name }}{% if field.errors %} errors{% endif %}">
+     <th>
+       <label for="id_{{ field.name }}">{{ field.label }}</label>
+     </th>
+     <td>
+       {{ field }}
+       {% if field.errors %}{{ field.errors }}{% endif %}
+       {% if field.help_text %}
+       <p class="helptext">{{ field.help_text }}</p>
+       {% endif %}
+     </td>
+   </tr>
+   {% endwith %}
+   
+   {{ form.members }}
+
+   <tr>
+     <td></td><td><a href="#" id="add-email">click to add more empty boxes</a></td></tr>
+   <tr>
+    <td></td>
+    <td>
+  {% if not form.fields.join_leagues.choices %}
+     <input type="submit" name="submit" value="submit" />
+  {% endif %}
+    </td>
+   </tr>
+  </table>
+ </form>
+ </div>
+</div>
+
+
+
+{% endblock %}

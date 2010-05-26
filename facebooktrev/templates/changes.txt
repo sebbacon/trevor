@@ -1,0 +1,10 @@
+news added:
+{% for n in news_added %}
+ {{ n }}
+{% endfor %}
+
+streams updated:
+{% for s in streams_updaed %}
+ {{ s }}
+{% endfor %}
+

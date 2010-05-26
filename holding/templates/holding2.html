@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+{% block extra-head %}
+  <meta name="robots" content="index" />
+{% endblock %}
+
+{% block content %}
+<div class="span-2">
+ <div class="panel"
+   <p class="h2">WhatEverTrevor is a simple game about football. It's
+   free to play.</p>
+
+   <p class="h2">Jackpot prize for the next game is &pound;1million.</p>
+
+   <p class="h2">Next game opens in Spring 2010</p>
+
+ </div>
+</div> 
+
+<div class="span-1 last">
+ <div class="panel">
+   <p class="h2">Pre-register for free to guarantee your place in the
+   next game</p>
+  <form method="post" action="{% url holdingsignup %}">
+  {{ message }}
+  <input class="clear-on-click cell-bottom" type="input" name="email" value="enter your email address" />
+  <input class="bigsubmit" name="waiting-list" type="submit" value="submit" />
+  </form>
+ </div>
+</div> 
+
+
+{% endblock %}
+
+{% block actions %}{% endblock %}
+{% block home %}{% endblock %}
+{% block sponsors %}
+<ul>
+ <li><a href="http://www.youtube.com/user/trevwhatev"><img src="{{ MEDIA_URL}}youtube.png" /></a></li>
+ <li><a href="http://twitter.com/TrevWhatev/"><img src="{{ MEDIA_URL}}twitter.png" /></a></li>
+</ul>
+{% endblock %}
+
+{% block extrabottomnav %}
+<li><a href="/blog/">Blog</a></li>
+<li><a href="{% url holdinggame %}">Current game</a></li>
+{% endblock %}
+

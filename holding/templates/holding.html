@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+{% block extra-head %}
+  <meta name="robots" content="index" />
+{% endblock %}
+
+{% block content %}
+<div class="titleheader">&nbsp;</div>
+<div class="span-1">
+ <div class="panel">
+  <h2>Current game</h2>
+  <h2>Jackpot prize &pound;10,000</h2>
+  <h2>Entry now closed</h2>
+ </div>
+</div>
+
+<div class="span-1">
+ <div class="panel">
+ <h2>Current game<br />
+ top 10 selections</h2>
+<table class="league-table">
+ <tr>
+  <th></th>
+  <th>name</th>
+  <th>PTS</th>
+  <th>GD</th>
+ </tr>
+{% for p in predictions %}
+ <tr class="{% cycle 'odd' 'even' %}">
+   <td>{{ forloop.counter }}</td>
+   <td>{{ p.user.display_name }}</td>
+   <td>{{ p.score }}</td>
+   <td>{{ p.goaldiff }}</td>
+ </tr>
+{% endfor %}
+ </table>
+ </div>
+</div>
+
+<div class="span-1 last">
+ <div class="panel">
+  <h2>Next game starts May 2010</h2>
+  <h2>Jackpot prize &pound;1million</h2>
+  <h2>Pre-register to guarantee your place</h2>
+  <form method="post" action="{% url holdingsignup %}">
+  {{ message }}
+  <input class="clear-on-click cell-bottom" type="input" name="email" value="enter your email address" />
+  <input class="bigsubmit" name="waiting-list" type="submit" value="submit" />
+  </form>
+ </div>
+</div> 
+
+
+
+{% endblock %}
+

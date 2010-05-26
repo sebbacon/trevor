@@ -1,0 +1,330 @@
+/*
+ colours
+
+ 'what' red: #c83418
+ darkest blue: #1e2038
+ lighest blue: #777dc4
+ background blue: #393c5f
+ just-lighter-than-bg: #494e7a
+
+*/
+
+body {
+ margin-top: 5px;
+ color: #1e2038;
+}
+
+#loginform {
+ display: none;
+ position: absolute;
+ border: solid #1e2038 3px;
+ background: white;
+}
+
+div#logo {
+ margin: 0;
+ padding: 0;
+}
+
+div#logo h1 {
+ margin: 0;
+ padding: 0;
+}
+
+#visualization {
+ width: 340px;
+ height: 340px;
+}
+
+.red {
+ color: #c83418 ! important;
+}
+
+#header {
+ vertical-align: bottom;
+ padding: 0;
+ margin-top: 0;
+}
+
+#header #pages {
+ text-align: left;
+}
+#header #actions {
+ text-align: right;
+}
+#header ul, #footer ul {
+ margin: 0;
+ padding: 0;
+}
+#header div ul li, #footer div ul li {
+ list-style: none;
+ display: inline;
+ padding: 0;
+}
+
+#header ul li a, #footer ul li a {
+ text-decoration: none;
+ padding: 2px;
+}
+#header ul li a:hover {
+}
+
+#footer {
+ padding: 30px;
+ margin-top: 30px;
+}
+
+#footer #sponsors {
+ text-align: left;
+}
+#footer #sponsors ul li {
+ margin-right: 20px;
+}
+#footer #bottom-nav {
+ text-align: right;
+}
+
+#footer ul li a {
+ font-weight: bold;
+ padding: 0;
+}
+div#footer div#bottom-nav ul li {
+ padding: 0;
+ margin: 0;
+ padding-left: 8px;
+ padding-right: 10px;
+}
+
+div#footer div#bottom-nav ul li.lastnav {
+ border-right: 0;
+}
+
+#endnotes div {
+ margin-left: -25px;
+}
+
+#signup input {
+    margin: 0;
+}
+
+.errorlist {
+ margin: 0;
+ color: red;
+ list-style: none;
+ font-size: 80%;
+ font-style: italic;
+}
+tr.errors td input {
+ border: solid red 2px;
+}
+
+span.required {
+ color: red;
+ float: right;
+}
+
+input {
+ font-size: 110%;
+}
+p.helptext {
+ font-size: 80%;
+ font-style: italic;
+ margin-top:3px;
+}
+
+.quiet {
+ font-size: 90%;
+ font-style: italic;
+}
+
+.prediction {
+ display: none;
+ position: absolute;
+ background-color: lightgray;
+ border: solid darkgray 1px;
+ padding: 6px;
+ margin-top: -1em;
+ font-size: 0.8em;
+ z-index: 1;
+ width: 20em;
+ color: #1e2038;
+}
+
+.prediction ol li {
+
+}
+
+.myrow td {
+ background-color: yellow ! important;
+ color: black;
+}
+
+#main .myrow td a {
+ color: black;
+}
+table#join-form tr th, table.form-type-1 tr th {
+ vertical-align: top;
+ text-align: right;
+ width: 30%;
+}
+
+
+ol#prediction {
+ margin: 0;
+}
+
+ol#prediction li:hover {
+ background-color: #777DC4;
+}
+
+ol#prediction li label {
+ cursor: move;
+}
+
+
+span.mini-sparkline {
+ width: 75px;
+ height: 25px;
+ float: right;
+}
+
+
+table.league-table tr.header th {
+ //'what' red: #c83418
+ //darkest blue: #1e2038
+ //lighest blue: #777dc4
+ //background blue: #393c5f
+ //just-lighter-than-bg: #494e7a
+}
+
+table.league-table tbody tr th {
+ background: #e5ecf9;
+ border-bottom: solid #777dc4 1px;
+}
+
+table.league-table tbody tr th, 
+table.league-table tbody tr td {
+ vertical-align: top;
+}
+
+h3.small-instruction {
+}
+
+tr.even td {
+}
+
+label {
+}
+
+input {
+ border-size:1px;
+ margin-top:5px;
+}
+
+div.panel input[type="text"] {
+ width: 225px;
+}
+
+input.bigsubmit {
+ font-weight: bolder;
+ margin: 0;
+ padding: 0;
+ background: none;
+ cursor: pointer;
+}
+
+input.bigsubmit:hover, input[type="submit"]:hover {
+ cursor: pointer;
+ cursor: hand;
+}
+
+div.blog-excerpt p {
+ padding: 5px;
+ margin: 0px -5px -5px -5px;
+}
+ 
+div.panel p.read-more {
+ padding: 0 0 0 50px;
+ margin: 10px 0 0 5px;
+ font-size: 2em;
+}
+p.read-more a{
+ text-decoration: none;
+}
+div.blog-excerpt h3 {
+}
+
+p.quiet { 
+}
+
+tr.hidden-row {
+ display: none;
+}
+
+form#add-league input {
+ margin: 0;
+ padding: 0;
+}
+
+form#add-league div.notice {
+ border: solid white 3px;
+ margin: 10px;
+}
+
+form#add-league div.notice ul {
+ list-style: none;
+ padding: 0;
+}
+form#add-league div.notice li {
+ display: inline;
+ padding-right: 5px;
+}
+
+.google-visualization-sparkline-selected, 
+.google-visualization-sparkline-default {
+ background: none ! important;
+ border: none;
+}
+
+#main a.show-prediction {
+}
+
+
+h1, h2, h3, h4 {
+ margin: 0 0 15px 0;
+ line-height: 1;
+ color: #393c5f;
+ font-weight: bold;
+}
+
+.prediction-panel {
+ width: 20em;
+ border: solid lightgrey 6px;
+ padding: 0
+}
+
+.prediction-panel ol{
+ width: 15em;
+}
+.prediction-panel ol li label {
+ display: block;
+}
+
+div.prediction-panel ol#prediction input.bigsubmit {
+ margin-top: 10px;
+}
+
+#header ul li,
+#header ul li a {
+ font-size: 1.1em ! important;
+ color: white;
+}
+
+.hometext {
+ font-size: 1.1em
+}
+
+.hometext p {
+ font-size: 1.3em
+}
+

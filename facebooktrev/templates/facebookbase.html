@@ -1,0 +1,159 @@
+<style>
+
+div.trevor {
+  margin-left: 250px;
+  width: 520px;
+}
+
+.fbbluebox  
+{  
+    background-color: #eceff6;  
+    border: 1px solid #d4dae8;  
+    color: #333333;  
+    padding: 10px;  
+    font-size: 13px;  
+    font-weight: bold;  
+}  
+
+tr.myrow {
+    background-color: #fff9d7 ! important;  
+    border: 1px solid #e2c822;  
+    color: #333333;  
+    font-weight: bold;  
+}
+
+.trevor p {
+  font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+  font-size:11px;
+  color: #333333; /* don't use just black, it won't look good */
+ }
+
+.trevor .box h3 
+ {
+ background-color:#D8DFEA;
+  border-top:1px solid #3B5998;
+  color:#3B5998;
+  font-size:11px;
+  padding:1px 6px; 
+  margin:0;
+  font-weight:bold;
+ }
+div.subtitle {
+  background-color:#EEEEEE;
+  border-bottom:1px solid #CCCCCC;
+  color:#000000;
+  font-size:11px;
+  font-weight:normal;
+  padding:3px 5px 2px;
+ }
+
+
+ .trevor .upd_on
+ {
+  color: gray;
+  margin: 0 0 0px 5px;
+  font-size:10px;
+  font-weight:normal;
+  padding:0;
+  text-align: right;
+ }
+ .trevor table {
+  margin-left:20px;
+  margin-top:17px;
+  width:370px;
+  text-align:center;  
+ }
+ .trevor th.name_heading {
+  color:#333333;
+  font-size:11px;
+  font-weight:bold;
+ }
+ .trevor table th {
+  border-color:#C7CFE0;
+  border-bottom:1px solid #E2E6EF;
+  margin:0;
+  padding:3px;
+  color:#777777;
+  font-size:9px;
+ }
+ .trevor td {
+  border-bottom:1px solid #E2E6EF;
+  margin:0;
+  padding:3px;
+  color:#555555;
+  font-size:11px;
+ }
+ .trevor table .even_colomn {
+  background:#F8F8F8 none repeat scroll 0 0;
+ }
+ .trevor td.action_text {
+  width:230px;
+ }
+
+ .trevor table.league-table tr { background-color:#FFFFFF; }
+ .trevor table.league-table tr.odd { background-color:#F0F0FF; }
+ .trevor table.league-table td { padding:3px 3px 3px 9px; }
+ .trevor table.league-table .subheader { color:gray; font-size:9px; }
+ .trevor table.league-table h4 { font-weight:bold;margin:0;font-size:11px; }
+
+.menu {
+  background:#F7F7F7 none repeat scroll 0 0;
+  border:1px solid #BDC7D8;
+  padding:5px;
+  font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+  font-size:11px;
+  width: 230px;
+  float: left;
+ }
+ .menu h3 {
+  margin-bottom:10px;
+  padding:5px 0 0 5px;
+  font-size:13px;
+ }
+ .menu ul {
+  color:#3B5998;
+  padding:0 10px 5px;
+ }
+ .menu li {
+  font-weight:bold;
+  list-style-image:none;
+  list-style-position:inside;
+  list-style-type:square;
+  padding:0 0 5px;
+ }
+ .menu .descrip {
+  color:#444444;
+  font-weight:normal;
+  padding:3px 0 0 15px;
+ }
+
+</style>
+
+<h1>Welcome to WhatEverTrevor</h1>
+<p class="fbbluebox">WhatEverTrevor simple, free game about football with a &pound;1million jackpot prize!</p>
+
+<div class="menu">
+<h3>WhatEverTrevor</h3>
+ <ul>
+  <li>
+   <a href="{{ app_url }}">Settings</a>
+   <div class="descrip">Manage your account</div>
+  </li>
+  <li>
+   <a href="#">Invite</a>
+   <div class="descrip">Invite your friends to compete against you in the league</div>
+  </li>
+  <li>
+   <a href="http://www.whatevertrevor.co.uk/">The WhatEverTrevor website</a>
+   <div class="descrip">What to know more?  Read more about us on our website</div>
+  </li>
+ </ul>
+
+</div>
+
+
+<div class="trevor">
+
+{% block content %}{% endblock %}
+
+</div>

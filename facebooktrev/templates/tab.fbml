@@ -1,0 +1,16 @@
+{% extends 'facebookbase.html' %}
+
+{% block content %}
+
+{% include "show_condensed_table.fbml" %}
+
+{% if user %}
+ {% if not user.user %}
+  <p>You don't currently have a WhatEverTrevor account set up with your address <code>{{ email }}</code>.  This app is currently only for our beta testers, sorry!</p>
+  <p>We'll get in touch as soon as the next season starts.</p>   
+ {% endif %}
+{% endif %}
+
+Visit the <a href="{{app_url}}">Whatever Trever app home page</a> to change your settings!
+
+{% endblock content %}

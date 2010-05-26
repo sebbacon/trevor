@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load extras %}
+{% block title %}Make your selection{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% else %}
+
+<div class="span-3 last">
+ <div class="panel>"
+  <h2>How do you think the league will look on {{ competition.competition_date|date:"d b Y"}}?</h2>
+  {% if score %}
+   <h3 class="notice ui-state-highlight ui-corner-all">That selection would score {{ score }} points and put you at 
+   {{ position|ordinalise }} place.</h3>  
+  {% endif %}
+  <p>You'll no longer be able to change your selection {{ competition.close_date|naturalTimeDifferenceFuture }}.  <strong>If you score the same as someone else, the person who made the selection first wins</strong>, so be sure you want to change it!</p>
+ </div>
+</div>
+
+<div class="span-1 prediction-panel">
+
+  <form action="" method="post">
+    {{ form }}
+    <input class="bigsubmit" type="submit" name="preview" value="preview" />
+    <input class="bigsubmit" type="submit" name="save" value="save selection" />
+  </form>
+</div>
+
+<div class="span-2 last">
+   <p>To work this out, you may want to review the current table and fixtures list <a target="_blank" href="http://news.bbc.co.uk/sport1/hi/football/eng_div_1/fixtures/default.stm">on the BBC Sport website</a>.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,47 @@
+{% extends 'facebookbase.html' %}
+
+
+{% block content %}
+
+{% if not has_authorized %}
+<div class="box">
+<h3>Link your account</h3>
+<p>WhatEverTrevor is currently in a private beta.  If you have an account on WhatEverTrevor which matches your Facebook email, press the "Link to my WhatEverTrevor account" button to activate this application.</p>
+
+<form promptpermission="publish_stream,email" action="" method="POST">
+ <input type="hidden" name="link" value="baz" />
+ <input type="submit" class="inputsubmit" name="" value="Link to my WhatEverTrevor account" />
+</form>
+</div>
+
+{% else %}
+
+ <fb:bookmark />
+
+ {% if user %}
+  {% if user.user %}
+  
+   {% if show_full_table %}
+     {% include "show_full_table.fbml" %}
+   {% endif %}
+   {% if show_condensed_table %}
+     {% include "show_condensed_table.fbml" %}
+   {% endif %}
+
+
+  {% else %}
+   <p>You don't currently have a WhatEverTrevor account set up with your address <code>{{ email }}</code>.  This app is currently only for our beta testers, sorry!</p>
+   <p>We'll get in touch as soon as the next season starts.</p>   
+
+ <h3>Link with specific WhatEverTrevor account</h3>
+ <form promptpermission="publish_stream,email" action="" method="POST">
+  <input type="hidden" name="link-manual" value="baz" />
+  Email address: <input type="text" name="email" /> <br />
+  Password: <input type="password" name="password" /><br />
+  <input type="submit" class="inputsubmit" name="" value="Link with this WhatEverTrevor account" />
+ </form>
+  {% endif %}
+ {% endif %}
+{% endif %}
+
+{% endblock %}

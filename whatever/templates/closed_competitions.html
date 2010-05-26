@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load extras %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="titleheader">
+ <h2>Closed competitions</h2>
+</div>
+  <div id="tabs" class="ui-tabs">
+    <ul class="tab">
+   {% for comp in closed_comps %}
+      <li>
+      <a href="#comp-{{ comp.pk }}"><span class="title">{{ comp.name }}</span>
+      {% if comp.my_prediction %}
+      <span class="summary-data">{{comp.my_prediction.current_position|ordinalise }} place</span>
+      {% else %}
+        <span class="summary-data">not entered</span>
+      {% endif %}
+      </a>
+      </li>
+   {% endfor %}
+    </ul>
+   {% for comp in closed_comps %}
+    <div class="competition container ui-tabs-hide" id="comp-{{ comp.pk }}">
+      <div class="competition-text span-3 last">
+      	<p>
+      	 <em>What did the Premier League Table look like at the end of {{ comp.competition_date|date:"j F" }}?</em> 
+	 {% if not comp.is_open %}
+          <strong>This competition closed on {{ comp.competition_date|date:"j F" }}.</strong>
+         {% endif %}
+
+      	</p>
+
+	<div class="span-1">
+      	{% if comp.my_prediction %}
+      	  <img class="meter" width="100"  height="50" src="http://chart.apis.google.com/chart?chs=100x50&cht=gom&chd=t:{{comp.my_prediction.current_position|googleometerpos:comp.my_prediction.competition.prediction_set.count}}" />
+      	  <span class="current-notice">You're currently {{comp.my_prediction.current_position|ordinalise }} out of {{ comp.my_prediction.competition.prediction_set.count }} players.</span> 
+      	{% else %}
+      	  <div class="meter">&nbsp;</div><span class="current-notice">{{ comp.prediction_set.count }} {% ifequal comp.prediction_set.count 1 %}person{% else %}people{% endifequal %} played in this game.</span> 
+      	{% endif %}
+      	<p><strong>The winner was {{ comp.winner.user.display_name }} with {{ comp.winner.score }} points.</strong></p>
+        </div>
+	<div class="span-2 last">
+	{% if comp.my_prediction %}
+         <div class="league-table">
+          <h3>Your current position</h3>
+          <table class="league-table">
+           <tr>
+            <th>Pos</th>
+            <th>Pts</th>
+            <th>GD</th>
+            <th>Entered</th>
+            <th>Who</th>
+           </tr>
+          {% for p in comp.my_prediction.in_context_with_rank %}
+           <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user request.user %} myrow{% endifequal %}">
+             <td>{{ p.rank }} {% if p.abs_change_on_last_position %}<span class="change"><img src="{{ MEDIA_URL }}{{p.direction_change}}.png" />{{ p.abs_change_on_last_position }}</span>{% endif %}
+       </td>
+             <td>{{ p.score }}</td>
+             <td>{{ p.goaldiff }}</td>
+             <td>{{ p.edited_date|date:"d/m/y" }}</td>
+             <td>{{ p.user.display_name }}</td>
+           </tr>
+          {% endfor %}
+          </table>
+         <p><a href="{% url table competition=comp.pk %}">See full table</a></p>
+        </div>    
+	{% else %}
+         {% if comp.top_predictions %}
+          <div class="league-table">
+           <h3>Leaderboard</h3>
+           <table class="league-table">
+            <tr>
+             <th>Pos</th>
+             <th>Pts</th>
+             <th>GD</th>
+             <th>Entered</th>
+             <th>Who</th>
+            </tr>
+           {% for p in comp.top_predictions %}
+            <tr class="{% cycle 'odd' 'even' %}{% ifequal p.user request.user %} myrow{% endifequal %}">
+              <td>{{ p.current_position }} {% if p.abs_change_on_last_position %}<span class="change"><img src="{{ MEDIA_URL }}{{p.direction_change}}.png" />{{ p.abs_change_on_last_position }}</span>{% endif %}
+        </td>
+              <td>{{ p.score }}</td>
+              <td>{{ p.goaldiff }}</td>
+              <td>{{ p.edited_date|date:"d/m/y" }}</td>
+              <td>{{ p.user.display_name }}</td>
+            </tr>
+           {% endfor %}
+           </table>
+          <p><a href="{% url table competition=comp.pk %}">See full table</a></p>
+         </div>    
+         {% endif %}
+	{% endif %}
+	</div>
+	
+
+      </div>
+      <div class="actions clearfix">
+       {% if comp.is_open %}
+       {% else %}
+        <strong>Entry to this competition is now closed</strong>
+       {% endif %}
+         <a class="button" href="{{ comp.get_absolute_url }}">View stats</a>
+     </div>
+   </div>
+   {% endfor %}
+   </div>
+
+{% endblock %}
+
+
