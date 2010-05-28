@@ -73,7 +73,7 @@ class TeamSelection(forms.Widget):
                           'League One',
                           'League Two',
                           'Conference']
-        self.divisions = []
+        self.divisions = [(None, 'None')]
         for d in division_order:
             division = Division.objects.get(name=d)
             self.divisions.append((division.pk, division.name))
@@ -82,11 +82,12 @@ class TeamSelection(forms.Widget):
     @staticmethod
     def team_choices():
         teams = Team.objects.order_by('name').all()
-        return [(t.pk, t.name) for t in teams]
+        return [(None,'Noney')] + [(t.pk, t.name) for t in teams]
 
     def choices_dict(self):
         mydict = {}
         divisions = Division.objects.all()
+        mydict[(None, 'None')] = [(None, 'None')]
         for division in divisions:
             teams = [(t.pk, t.name) for t in division.team_set.all()]
             mydict[(division.pk, division.name)] = teams
@@ -98,7 +99,8 @@ class TeamSelection(forms.Widget):
         final_attrs = self.build_attrs(attrs, name=name)
         teams_output = [u'<select%s>' % forms.util.flatatt(final_attrs)]
         divisions_output = [u'<select id="team_division">']
-        for division, teams in choices.items():
+        for division in self.divisions:
+            teams = choices[division]
             team_options = self.render_team_options(division, teams, [value])
             if team_options:
                 teams_output.append(team_options)
@@ -118,7 +120,7 @@ class TeamSelection(forms.Widget):
             option_value = force_unicode(option_value)
             selected_html = (option_value in selected_teams) and u' selected="selected"' or ''
             return u'<option class="%s" value="%s"%s>%s</option>' % (
-                "division-%d" % division[0],
+                "division-%s" % division[0],
                 escape(option_value), selected_html,
                 conditional_escape(force_unicode(option_label)))
         # Normalize to strings.

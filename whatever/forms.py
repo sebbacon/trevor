@@ -166,7 +166,10 @@ class UserForm(TemplatedForm):
         last_name = self.cleaned_data['last_name']
         password = self.cleaned_data['password1']
         supported_team_id = self.cleaned_data['supported_team']
-        supported_team = Team.objects.get(pk=supported_team_id)
+        if supported_team_id != "None":
+            supported_team = Team.objects.get(pk=supported_team_id)
+        else:
+            supported_team = None
         this_year = datetime.datetime(settings.CURRENT_SEASON, 1, 1)
         user = CustomUser.objects.create(username=email,
                                          email=email,
