@@ -16,7 +16,7 @@ class NoAuthBackend(ModelBackend):
                 user.save()
                 return user
             else:
-                if user.check_password(password):
+                if user.check_password(unicode(password)):
                     user.login_count += 1
                     user.save()
                     return user

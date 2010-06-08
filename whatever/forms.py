@@ -179,6 +179,7 @@ class UserForm(TemplatedForm):
                                          last_name=last_name,
                                          supported_team=supported_team,
                                          is_active=False)
+        user.set_password(password)
         user.save()
         prediction_obj = Prediction(year=this_year,
                                     user=user,
