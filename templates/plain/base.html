@@ -34,7 +34,6 @@
   </head>
 
   <body id="section-{% block section %}home{% endblock %}">
-    <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_US" type="text/javascript"></script>
     {% block header %}
 
     {% if user.is_anonymous %}
@@ -142,10 +141,5 @@
       </div>
     </div>
  </div>
-   <script type="text/javascript">
-    {% block fbjs %}
-     FB.init("{{ settings.FACEBOOK_API_KEY }}", "/xd_receiver.htm");
-    {% endblock %}
-   </script>
   </body>
 </html>
