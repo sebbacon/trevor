@@ -168,13 +168,18 @@ table#join-form tr th, table.form-type-1 tr th {
  width: 30%;
 }
 
-
 ol#prediction {
  margin: 0;
 }
 
 ol#prediction li:hover {
  background-color: #777DC4;
+}
+
+ol#prediction li {
+ padding: 0;
+ border: 1px solid white;
+ list-style: none;
 }
 
 ol#prediction li label {
