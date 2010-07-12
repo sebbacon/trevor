@@ -34,7 +34,7 @@ class Command(BaseCommand):
         opener = urllib2.build_opener()
         fixtures = eval(opener.open(request).read())
         for fixture in fixtures:
-            date = datetime.strptime("%Y-%m-%d %H:%M:00", fixture['date'])
+            date = datetime.strptime(fixture['date'],"%Y-%m-%dT%H:%M:00")
             #home, created =
             #models.Team.objects.get_or_create(name=name)
             home = fixture['home'].replace("Man ", "Manchester ")\
