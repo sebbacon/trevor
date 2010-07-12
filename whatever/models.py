@@ -819,7 +819,7 @@ def getPreviousTable(competition=None):
              .filter(added__lt=date)\
              .order_by("-added")\
              .all() 
-    return tables and tables[0] or None
+    return tables and tables[1] or None
 
 def queue_movement_email(sender, **kwargs):
     prediction = kwargs['prediction']
