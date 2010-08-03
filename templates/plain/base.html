@@ -25,6 +25,7 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}jquery-ui-1.8.custom.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}code.js"></script>
     {% endblock %}
+
     <meta name="description" content="Football game. Free to play. Top prize &pound;1million.  Register now to secure your place in the next game" />
     <meta name="keywords" content="whatever trever, football, game, prize, soccer, premiership, predict, league, one million pounds" />
 
@@ -40,19 +41,32 @@
     <div id="loginform" class="panel">
      <form method="post" action="{% url login %}">
       <table>
-       <tr>
+       <tr class="facebook">
+        <td></td>
+        <td>
+	 <fb:login-button v="2" size="large" onlogin="window.location.href='{% url login_via_facebook %}';" perms="email,publish_stream">Login with Facebook</fb:login-button>
+        </td>
+       </tr>
+       <tr class="facebook">
+        <td></td>
+        <td>
+	  <a href="#" id="nonfacebooklogin">Log in with a username/password instead</a>
+        </td>
+       </tr>
+       <tr class="nonfacebook">
         <th><label for="email">Email</label></th>
         <td><input type="text" name="email" /></td>
        </tr>
-       <tr>
+       <tr class="nonfacebook">
         <th><label for="password">Password</label></th>
         <td><input type="password" name="password" /><br />
             <a href="{% url reset_password_request %}" class="red">I've forgotten my password!</a>
 </td>
        </tr>
-       <tr>
+       <tr class="nonfacebook">
         <td></td>
         <td><input type="submit" class="bigsubmit" name="login" value="login" /></td>
+
        </tr>
       </table>
      </form>
@@ -97,7 +111,7 @@
 
 <div id="white-bg">
     <div id="main" class="container">
-
+   <br /><iframe src="http://www.facebook.com/plugins/like.php?href=www.whatevertrevor.co.uk&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
 {% if request.GET.notice %}
  <div class="span-3"><p class="notice">{{ request.GET.notice }}</p></div>
 {% endif %}
@@ -141,5 +155,16 @@
       </div>
     </div>
  </div>
+   <div id="fb-root"></div>
+   <script src="http://connect.facebook.net/en_US/all.js"></script>
+   <script type="text/javascript">
+    {% block fbjs %}
+     FB.init({appId: '{{ settings.FACEBOOK_API_KEY }}', status: true, cookie: true, xfbml: true});
+     FB.Event.subscribe('auth.login', function(response) {
+        window.location.reload();
+      });
+    {% endblock %}
+   </script>
+
   </body>
 </html>

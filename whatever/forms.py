@@ -20,6 +20,8 @@ from utils import getCurrentTable
 from widgets import HiddenSelectMultiple
 from widgets import TeamSelection
 from whatever.models import League
+from whatever.models import Competition
+from whatever.models import RunningScore
 
 POSTCODE_RE = re.compile(r'\b[A-PR-UWYZ][A-HK-Y0-9][A-HJKSTUW0-9]?[ABEHMNPRVWXY0-9]? {0,2}[0-9][ABD-HJLN-UW-Z]{2}\b',re.I)
 
@@ -108,8 +110,35 @@ class PredictionForm(TemplatedForm):
     def save(self, domain_override=""):
         return self.cleaned_data['prediction']
 
+
 class PredictionPasswordForm(PredictionForm, NewPasswordForm):
     pass
+
+def _setup_initial_prediction(user, prediction, competition):
+    this_year = datetime.datetime(settings.CURRENT_SEASON, 1, 1)
+    if not Prediction.objects.filter(year=this_year,
+                                     user=user,
+                                     competition=competition)\
+                             .count():        
+        prediction_obj = Prediction(year=this_year,
+                                    user=user,
+                                    name=user.email,
+                                    competition=competition)
+        prediction_obj.save()
+
+        for t_id in prediction:
+            prediction_obj.teams.add(Team.objects.get(pk=t_id))
+        prediction_obj.save()
+        prediction_obj.calculateScore()
+        prediction_obj.calculateGoalDiff()
+        prediction_obj.calculatePosition()
+        meta_competition = Competition.objects.get(
+            pk=settings.CURRENT_META_COMPETITION_ID)
+        runningscore = RunningScore.objects.create(
+            name="Running score",
+            user=user,
+            competition=meta_competition)
+
 
 class UserForm(TemplatedForm):
     first_name = forms.CharField(required=False,
@@ -181,18 +210,7 @@ class UserForm(TemplatedForm):
                                          is_active=False)
         user.set_password(password)
         user.save()
-        prediction_obj = Prediction(year=this_year,
-                                    user=user,
-                                    name=email,
-                                    competition=competition)
-        prediction_obj.save()
-        
-        for t_id in prediction:
-            prediction_obj.teams.add(Team.objects.get(pk=t_id))
-        prediction_obj.save()
-        prediction_obj.calculateScore()
-        prediction_obj.calculateGoalDiff()
-        prediction_obj.calculatePosition()
+        _setup_initial_prediction(user, prediction, competition)
         profile = RegistrationProfile.objects.create_profile(user)
         return profile
 

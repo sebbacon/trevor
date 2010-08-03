@@ -2,6 +2,11 @@ from sets import Set
 import datetime
 import simplejson
 from itertools import chain
+import cgi
+import hashlib
+import urllib
+
+import simplejson as json
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect as redirect
@@ -19,12 +24,15 @@ from models import LeagueJoinStates
 from models import League
 from models import Competition
 from models import Team
+from models import RunningScore
 from models import EmailMessage
 from models import STATE_ACCEPTED, STATE_INVITED, STATE_APPLIED
 from models import STATE_REJECTED, STATE_DECLINED
 from forms import PredictionForm, UserForm, LeagueForm, NewLeagueForm
 from forms import PredictionPasswordForm
 from forms import NewPasswordForm
+from forms import _setup_initial_prediction
+from facebooktrev.models import FacebookUser
 from utils import addToQueryString, getCurrentPrediction
 from utils import getCurrentTable
 from utils import getPreviousTable
@@ -106,8 +114,6 @@ def home(request):
                     prediction = form.save()
                     request.session['prediction'] = prediction
                     request.session['competition'] = competition
-                    #user = authenticate(username=profile.user.email)
-                    #login(request, user)
                     return redirect(reverse('signup'))
                 else:
                     context['form'] = form
@@ -203,23 +209,45 @@ def _prediction_sorter(x, y):
 def _decorate_with_predictions(competitions, user):
     decorated = []
     for competition in competitions:
+        if competition.pk == settings.CURRENT_META_COMPETITION_ID:
+            whichmodel = RunningScore
+        else:
+            whichmodel = Prediction
         try:
-            my_prediction = Prediction.objects.get(
+            my_prediction = whichmodel.objects.get(
                 competition=competition,
                 user=user)
-        except Prediction.DoesNotExist:
+        except whichmodel.DoesNotExist:
             my_prediction = None
-        
         competition.my_prediction = my_prediction        
         decorated.append(competition)
     decorated.sort(lambda x, y: _prediction_sorter(y, x))
     return decorated                    
+
+def _parse_facebook_friends(request):
+    fb_sig = _get_facebook_cookie(request.COOKIES)
+    uid = fb_sig.get('uid', None)
+    session = request.session
+    fbuser = request.user.facebookuser.get()
+    if uid and uid != "None":        
+        friends = json.load(urllib.urlopen(
+            'https://graph.facebook.com/me/friends?access_token=%s'\
+            % fb_sig['access_token']))['data']
+        for friend in friends:
+            try:
+                fbfriend = FacebookUser.objects.get(uid=friend['id'])
+                fbuser.friends.add(fbfriend)
+            except FacebookUser.DoesNotExist:
+                continue
+    fbuser.save()
+
           
 @render('logged_in.html')
 def logged_in(request):
     if request.user.is_superuser:
         logout(request)
         return redirect(reverse('home'))
+    fb = _get_facebook_cookie(request.COOKIES)
     if request.user.is_authenticated()\
            and request.user.has_prediction():
         current = getCurrentTable()
@@ -531,25 +559,110 @@ def league_apply(request):
 def league_create(request):
     return locals()
 
+def _get_facebook_cookie(cookies):
+    api_key = settings.FACEBOOK_API_KEY
+    if api_key not in cookies:
+        return {}
+
+    prefix = "fbs_%s" % api_key 
+    try:
+        tmp = cgi.parse_qs(cookies[prefix])
+    except KeyError:
+        return {}
+    params = {}
+    for k, v in tmp.items():
+        params[k] = v[0]
+    payload = ''
+    for k in sorted(params):
+        if k != "sig":
+            value = params[k]
+            payload += "%s=%s" % (k, value)
+
+    hasher = hashlib.md5(payload)
+
+    hasher.update(settings.FACEBOOK_SECRET_KEY)
+    digest = hasher.hexdigest()
+    if digest == params["sig"]:
+        params['is_session_from_cookie'] = True
+        return params
+    else:
+        return {}
+
+def login_via_facebook(request):
+    fb_sig = _get_facebook_cookie(request.COOKIES)
+    uid = fb_sig.get('uid', None)
+    session = request.session
+    if uid and uid != "None":        
+        profile = json.load(urllib.urlopen(
+            'https://graph.facebook.com/me?access_token=%s'\
+            % fb_sig['access_token']))
+        try:
+            user = CustomUser.objects.get(email=profile['email'])
+            fbuser = FacebookUser.objects.get(user=user)
+            user = authenticate(username=user.email)
+            login(request, user)
+        except (CustomUser.DoesNotExist,
+                FacebookUser.DoesNotExist):
+            pass
+        facebook_friends = _parse_facebook_friends(request)
+    return redirect(reverse('home'))
+
+def signup_via_facebook(request):
+    fb_sig = _get_facebook_cookie(request.COOKIES)
+    uid = fb_sig.get('uid', None)
+    session = request.session
+    if uid and uid != "None":        
+        profile = json.load(urllib.urlopen(
+            'https://graph.facebook.com/me?access_token=%s'\
+            % fb_sig['access_token']))
+        try:
+            user = CustomUser.objects.get(email=profile['email'])
+        except CustomUser.DoesNotExist:
+            user = CustomUser.objects.create(
+                username=profile['email'],
+                email=profile['email'],
+                can_email=True,
+                first_name=profile['first_name'],
+                last_name=profile['last_name'],
+                is_active=True)
+        try:
+            fbuser = FacebookUser.objects.get(user=user)
+        except FacebookUser.DoesNotExist:
+            fbuser = FacebookUser.objects.create(uid=uid,
+                                                 user=user)
+        _setup_initial_prediction(user,
+                                  session['prediction'],
+                                  session['competition'])
+        notify_signedup(request, uid)
+        user = authenticate(username=user.email)
+        login(request, user)
+        facebook_friends = _parse_facebook_friends(request)
+
+    return redirect(reverse('home'))
+    
+
+def notify_signedup(request, uid):
+    fb = request.facebook
+    message = "just joined WhatEverTrevor"
+    attachment = {'name':"WhatEverTrevor's premier league",
+                  'href':"http://www.whatevertrevor.co.uk/",
+                  'caption':'{*actor*} ' + message,
+                  'description':('WhatEverTrevor is a free game '
+                                 'about football, with a jackpot prize')}
+    news = [{'message':"@:%s %s" % (uid, message)}]
+    fb.dashboard.addNews(news,
+                         uid=uid)
+    fb.stream.publish(attachment=attachment,
+                      uid=uid)
+
+
 def signup(request):
     context = {}
-    # XXX the following is a stub for building on based on facebook
-    # connect.
-    # Need to decide how to gather favourite team and mail consent
-    # data
-    
-    
-    #fb_sig = request.facebook.validate_cookie_signature(request.COOKIES)
-    #uid = fb_sig.get('user', None)
-    uid = None
-    if uid and uid != "None":        
-        email = request.facebook.users.getInfo(uid, 'email')
-        # etc
+    session = request.session
     if request.method == "POST":
         # signup attempt
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
-            session = request.session
             profile = form.save(prediction=session['prediction'],
                                 competition=session['competition'])
             user = authenticate(username=profile.user.email)
@@ -691,4 +804,14 @@ def process_email_queue(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    key = settings.FACEBOOK_API_KEY,
+    prefixes = ["fbs_%s" % key,
+                "%s_expires",
+                "%s" % key,
+                "%s_session_key" % key,
+                "%s_user" % key]
+    response = redirect(reverse('home'))        
+    if request.COOKIES.has_key(prefixes[0]):
+        for prefix in prefixes:
+            response.delete_cookie(prefix)
+    return response

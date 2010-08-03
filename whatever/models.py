@@ -84,7 +84,7 @@ class CustomUser(User):
     
     def has_prediction(self):
         return Prediction.objects.filter(user=self)
-    
+
     def leagues_by_state(self, state):
         return self.leagues.filter(leaguejoinstates__state=state)
 
@@ -94,6 +94,13 @@ class CustomUser(User):
             competition_date__lt=now,
             prediction__user=self)
 
+    def get_facebook_friends(self):
+        #<h3>Your current position {{
+        #request.user.facebookuser.get.friends.count }}! {% if
+        #request.user.facebookuser.friends.count %}against your
+        #friends{% endif %}
+        return self.facebookuser.get().friends.all()
+    
     def __unicode__(self):
         return self.email
     
@@ -296,10 +303,12 @@ class CursorGenerator(object):
     def __init__(self,
                  cursor,
                  start_count=None,
-                 max_count=None):
+                 max_count=None,
+                 model_type=None):
         self.cursor = cursor
         self.start_count = start_count
         self.max_count = max_count
+        self.model_type = model_type
         
     def __iter__(self):
         return self._get_predictions_from_cursor(self.cursor,
@@ -325,7 +334,7 @@ class CursorGenerator(object):
             d = {}
             for (i, column_desc) in enumerate(cursor.description):
                 d[column_desc[0]] = next_row[i]
-            prediction = Prediction.objects.get(pk=d['id'])
+            prediction = self.model_type.objects.get(pk=d['id'])
             prediction.rank = d['rank']
             curr_count += 1
             if max_count and curr_count == start_count + max_count:
@@ -360,7 +369,7 @@ class Competition(Model):
         from django.db import connection
         cursor = connection.cursor()
         cursor.execute(SQL, [self.id,])
-        return CursorGenerator(cursor)
+        return CursorGenerator(cursor, model_type=Prediction)
         
     @permalink
     def get_absolute_url(self):
@@ -396,6 +405,155 @@ class Competition(Model):
     class Meta:
         ordering = ['competition_date']
 
+
+class RunningScore(Model):
+    name = models.CharField(max_length=80)
+    user = models.ForeignKey(CustomUser)
+    score = models.IntegerField(default=0)
+    goaldiff = models.IntegerField(default=0)
+    positions = models.ManyToManyField(Position)
+    created_date = models.DateTimeField(auto_now_add=True)
+    edited_date = models.DateTimeField(auto_now_add=True)
+    competition = models.ForeignKey(Competition)
+
+    @permalink
+    def get_absolute_url(self):
+        return ("runningscore", (self.slug,))
+
+    @property
+    def current_position(self):
+        try:
+            p = self.positions\
+                .order_by('-date')\
+                .all()[0].position
+        except IndexError:
+            p = 0
+        return p
+
+    @property
+    def change_on_last_position(self):
+        current = self.current_position
+        try:
+            last = self.positions\
+                   .order_by('-date')\
+                   .all()[1].position
+        except IndexError:
+            last = current
+        return last - current
+
+    @property
+    def abs_change_on_last_position(self):
+        return abs(self.change_on_last_position)
+        
+    def direction_change(self):
+        pos = self.change_on_last_position
+        if pos > 0:
+            direction = "up"
+        elif pos < 0:
+            direction = "down"
+        else:
+            direction = ""
+        return direction
+
+    def calculateScore(self, new_score=0):
+        if not settings.CLOSE_SEASON:
+            self.score += round(new_score / 100.0)
+            self.save()
+        return self.score
+
+    def calculateGoalDiff(self, new_goaldiff=0):
+        if not settings.CLOSE_SEASON:
+            self.goaldiff += round(new_goaldiff / 10.0)
+            self.save()
+        return self.goaldiff
+
+    def calculatePosition(self, save=True):
+        SQL = """
+        select id, rank, user_id from
+        (select id, user_id, score, goaldiff, competition_id, rank()
+        over (partition by competition_id order by score desc,
+        goaldiff desc, edited_date) from whatever_runningscore where
+        competition_id = %s) as temp where user_id = %s;
+        """
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(SQL, [self.competition.id,
+                             self.user.id])
+        prediction = list(CursorGenerator(cursor,
+                                          model_type=RunningScore))[0]
+        pos = prediction.rank
+        if save:
+            now = datetime.date.today()
+            position = Position.objects.get_or_create(
+                position=pos,
+                date=now)[0]
+            self.positions.add(position)
+            self.save()
+        return pos
+    
+    def in_context(self):
+        predictions = RunningScore.objects.filter(competition=self.competition)
+        predictions = predictions.order_by('-score',
+                                           '-goaldiff',
+                                           'created_date')    
+        predictions = predictions.all()
+        my_position = self.current_position
+        predictions = predictions[max(0, my_position-4)\
+                                  :min(my_position+5,predictions.count())]
+        return predictions
+
+    def in_facebook_context_with_rank(self):
+        friends = self.user.facebookuser.get().friends.all()
+        friend_ids = [self.user.id] + [x.user.id for x in friends]
+        return self.in_context_with_rank(
+            user_subset_ids=friend_ids)
+
+    def in_context_with_rank(self, user_subset_ids=None):
+        from django.db import connection
+        if not user_subset_ids:
+            SQL = """
+            select id, user_id, score, goaldiff, competition_id, rank()
+            over (partition by competition_id order by score desc,
+            goaldiff desc, edited_date) from whatever_runningscore where
+            competition_id = %s order by competition_id, rank;
+            """
+            cursor = connection.cursor()
+            cursor.execute(SQL, [self.competition.id,])
+        else:
+            SQL_start = """
+            select id, user_id, score, goaldiff, competition_id, rank()
+            over (partition by competition_id order by score desc,
+            goaldiff desc, edited_date) from whatever_runningscore where
+            competition_id = %s
+            """
+            join_word = " AND "
+            for user_id in user_subset_ids:
+                SQL_start += join_word + "user_id = %s "
+                join_word = " OR "
+
+            SQL_start += " order by competition_id, rank"
+            cursor = connection.cursor()
+            args = [self.competition_id] + user_subset_ids
+            cursor.execute(SQL_start, args)
+
+        return CursorGenerator(
+            cursor,
+            start_count=max(0,self.current_position-5),
+            max_count=10,
+            model_type=RunningScore
+            )
+
+
+    def __unicode__(self):
+        return "%s %s (%s)" % (self.competition.name,
+                               self.name,
+                               self.created_date.strftime("%y/%m/%d"))
+
+    class Meta:
+        ordering = ('-score', '-goaldiff', 'edited_date')
+
+
+
 class Prediction(Model):
     name = models.CharField(max_length=80)
     teams = models.ManyToManyField(Team)
@@ -418,6 +576,7 @@ class Prediction(Model):
                                   null=True,
                                   related_name='predictions_for_goaldiff')
     competition = models.ForeignKey(Competition)
+    included_in_meta_competition = models.BooleanField(default=False)
     
     @permalink
     def get_absolute_url(self):
@@ -560,7 +719,8 @@ class Prediction(Model):
         cursor = connection.cursor()
         cursor.execute(SQL, [self.competition.id,
                              self.user.id])
-        prediction = list(CursorGenerator(cursor))[0]
+        prediction = list(CursorGenerator(cursor,
+                                          model_type=Prediction))[0]
         pos = prediction.rank
         if save:
             now = datetime.date.today()
@@ -615,20 +775,44 @@ class Prediction(Model):
                                   :min(my_position+5,predictions.count())]
         return predictions
 
-    def in_context_with_rank(self):
-        SQL = """
-        select id, user_id, score, goaldiff, competition_id, rank()
-        over (partition by competition_id order by score desc,
-        goaldiff desc, edited_date) from whatever_prediction where
-        competition_id = %s order by competition_id, rank;
-        """
+    def in_facebook_context_with_rank(self):
+        friends = self.user.facebookuser.get().friends.all()
+        friend_ids = [self.user.id] + [x.user.id for x in friends]
+        return self.in_context_with_rank(
+            user_subset_ids=friend_ids)
+        
+    def in_context_with_rank(self, user_subset_ids=None):
         from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute(SQL, [self.competition.id,])
+        if not user_subset_ids:
+            SQL = """
+            select id, user_id, score, goaldiff, competition_id, rank()
+            over (partition by competition_id order by score desc,
+            goaldiff desc, edited_date) from whatever_prediction where
+            competition_id = %s order by competition_id, rank;
+            """
+            cursor = connection.cursor()
+            cursor.execute(SQL, [self.competition.id,])
+        else:
+            SQL_start = """
+            select id, user_id, score, goaldiff, competition_id, rank()
+            over (partition by competition_id order by score desc,
+            goaldiff desc, edited_date) from whatever_prediction where
+            competition_id = %s 
+            """
+            join_word = " AND "
+            for user_id in user_subset_ids:
+                SQL_start += join_word + " user_id = %s "
+                join_word = " OR "
+            SQL_start += " order by competition_id, rank"
+            cursor = connection.cursor()
+            args = [self.competition_id] + user_subset_ids
+            cursor.execute(SQL_start, args)
+            
         return CursorGenerator(
             cursor,
             start_count=max(0,self.current_position-5),
-            max_count=10
+            max_count=10,
+            model_type=Prediction
             )
 
 

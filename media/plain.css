@@ -21,6 +21,14 @@ body {
  background: white;
 }
 
+#loginform .nonfacebook {
+ display: none;
+}
+
+.nonfacebookregister {
+ display: none;
+}
+
 div#logo {
  margin: 10px 0 0 0;
  padding: 0;
@@ -212,6 +220,10 @@ table.league-table tbody tr td {
  vertical-align: top;
 }
 
+table.league-table td.profilepic {
+ font-size: 75%;
+}
+
 h3.small-instruction {
 }
 
@@ -228,6 +240,10 @@ input {
 
 div.panel input[type="text"] {
  width: 225px;
+}
+
+div.panel {
+ margin-bottom: 20px;
 }
 
 input.bigsubmit {

@@ -60,6 +60,7 @@ div.panel {
  background-color: #393c5f;
  padding:5px;
  color: white;
+ margin-bottom: 10px;
 }
 
 div.panel img, div.panel div#sparkline {
@@ -264,6 +265,8 @@ p.helptext {
  color: black;
 }
 
+
+
 #main .myrow td a {
  color: black;
 }
@@ -316,6 +319,11 @@ table.league-table tbody tr th,
 table.league-table tbody tr td {
  vertical-align: top;
 }
+
+table.league-table td.profilepic {
+ font-size: 60%;
+}
+
 
 h3.small-instruction {
  font-size: 2em;

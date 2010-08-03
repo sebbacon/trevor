@@ -5,7 +5,14 @@ $(document).ready(function() {
 		$(this).next('div.prediction').css('display','block');
 		return false;
 	    });
-
+	$('a#nonfacebooklogin').click(function(){
+		$('.nonfacebook').toggle();
+		$('.facebook').toggle();		
+		    });
+	$('a#nonfacebookregister').click(function(){
+		$('.nonfacebookregister').toggle();
+		$('.facebookregister').toggle();		
+		    });
 	$("#prediction").sortable({ 
 		    handle : '.handle',
 		    containment: $('.prediction-panel'),
