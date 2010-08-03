@@ -609,7 +609,8 @@ def login_via_facebook(request):
         except (CustomUser.DoesNotExist,
                 FacebookUser.DoesNotExist):
             pass
-        facebook_friends = _parse_facebook_friends(request)
+        if not request.user.is_anonymous():
+            facebook_friends = _parse_facebook_friends(request)
     return redirect(reverse('home'))
 
 def signup_via_facebook(request):
