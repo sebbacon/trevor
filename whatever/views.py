@@ -594,26 +594,11 @@ def _get_facebook_cookie(cookies):
         return {}
 
 def login_via_facebook(request):
-    fb_sig = _get_facebook_cookie(request.COOKIES)
-    uid = fb_sig.get('uid', None)
-    session = request.session
-    if uid and uid != "None":        
-        profile = json.load(urllib.urlopen(
-            'https://graph.facebook.com/me?access_token=%s'\
-            % fb_sig['access_token']))
-        try:
-            user = CustomUser.objects.get(email=profile['email'])
-            fbuser = FacebookUser.objects.get(user=user)
-            user = authenticate(username=user.email)
-            login(request, user)
-        except (CustomUser.DoesNotExist,
-                FacebookUser.DoesNotExist):
-            pass
-        if not request.user.is_anonymous():
-            facebook_friends = _parse_facebook_friends(request)
+    signup_via_facebook(request, new_prediction=False)
     return redirect(reverse('home'))
 
-def signup_via_facebook(request):
+def signup_via_facebook(request,
+                        new_prediction=True):
     fb_sig = _get_facebook_cookie(request.COOKIES)
     uid = fb_sig.get('uid', None)
     session = request.session
@@ -636,9 +621,10 @@ def signup_via_facebook(request):
         except FacebookUser.DoesNotExist:
             fbuser = FacebookUser.objects.create(uid=uid,
                                                  user=user)
-        _setup_initial_prediction(user,
-                                  session['prediction'],
-                                  session['competition'])
+        if new_prediction:
+            _setup_initial_prediction(user,
+                                      session['prediction'],
+                                      session['competition'])
         notify_signedup(request, uid)
         user = authenticate(username=user.email)
         login(request, user)
