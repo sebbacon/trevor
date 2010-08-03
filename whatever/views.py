@@ -248,34 +248,34 @@ def logged_in(request):
         logout(request)
         return redirect(reverse('home'))
     fb = _get_facebook_cookie(request.COOKIES)
-    if request.user.is_authenticated()\
-           and request.user.has_prediction():
-        current = getCurrentTable()
-        leagues = request.user.leagues_by_state(STATE_ACCEPTED)
-        my_leagues = leagues.filter(owner=request.user)
-        now = datetime.datetime.now()
-        open_or_entered = Q(start_date__lt=now,
-                            close_date__gt=now) | \
-                          Q(start_date__lt=now,
-                            competition_date__gt=now,
-                            prediction__user=request.user)
-        open_comps = Competition.objects\
-                     .filter(start_date__lt=now,
-                             competition_date__gt=now)\
-                     .distinct()\
-                     .order_by('competition_date')
-        open_comps = _decorate_with_predictions(open_comps,
-                                                request.user)
-        closed_comps = Competition.objects\
-                       .filter(competition_date__lt=now)\
-                       .exclude(pk=settings.FIRST_COMPETITION_ID)\
-                       .all()
-        closed_comps = _decorate_with_predictions(closed_comps,
-                                                  request.user)
-        future_comps = Competition.objects\
-                       .filter(competition_date__gt=now,
-                               start_date__gt=now).all()
-        open_and_closed_comps = list(chain(open_comps, closed_comps))
+    if request.user.is_authenticated():
+        if request.user.has_prediction():
+            current = getCurrentTable()
+            leagues = request.user.leagues_by_state(STATE_ACCEPTED)
+            my_leagues = leagues.filter(owner=request.user)
+            now = datetime.datetime.now()
+            open_or_entered = Q(start_date__lt=now,
+                                close_date__gt=now) | \
+                              Q(start_date__lt=now,
+                                competition_date__gt=now,
+                                prediction__user=request.user)
+            open_comps = Competition.objects\
+                         .filter(start_date__lt=now,
+                                 competition_date__gt=now)\
+                         .distinct()\
+                         .order_by('competition_date')
+            open_comps = _decorate_with_predictions(open_comps,
+                                                    request.user)
+            closed_comps = Competition.objects\
+                           .filter(competition_date__lt=now)\
+                           .exclude(pk=settings.FIRST_COMPETITION_ID)\
+                           .all()
+            closed_comps = _decorate_with_predictions(closed_comps,
+                                                      request.user)
+            future_comps = Competition.objects\
+                           .filter(competition_date__gt=now,
+                                   start_date__gt=now).all()
+            open_and_closed_comps = list(chain(open_comps, closed_comps))
         return locals()
     else:
         return redirect(reverse('home'))
@@ -594,8 +594,8 @@ def _get_facebook_cookie(cookies):
         return {}
 
 def login_via_facebook(request):
-    signup_via_facebook(request, new_prediction=False)
-    return redirect(reverse('home'))
+    signup_via_facebook(request)
+    return redirect(reverse('logged_in'))
 
 def signup_via_facebook(request,
                         new_prediction=True):
@@ -606,31 +606,34 @@ def signup_via_facebook(request,
         profile = json.load(urllib.urlopen(
             'https://graph.facebook.com/me?access_token=%s'\
             % fb_sig['access_token']))
+        user = None
         try:
             user = CustomUser.objects.get(email=profile['email'])
         except CustomUser.DoesNotExist:
-            user = CustomUser.objects.create(
-                username=profile['email'],
-                email=profile['email'],
-                can_email=True,
-                first_name=profile['first_name'],
-                last_name=profile['last_name'],
-                is_active=True)
+            if session.has_key('prediction'):
+                user = CustomUser.objects.create(
+                    username=profile['email'],
+                    email=profile['email'],
+                    can_email=True,
+                    first_name=profile['first_name'],
+                    last_name=profile['last_name'],
+                    is_active=True)
         try:
             fbuser = FacebookUser.objects.get(user=user)
         except FacebookUser.DoesNotExist:
             fbuser = FacebookUser.objects.create(uid=uid,
                                                  user=user)
-        if new_prediction:
+        if session.has_key('prediction'):
             _setup_initial_prediction(user,
                                       session['prediction'],
                                       session['competition'])
         notify_signedup(request, uid)
-        user = authenticate(username=user.email)
-        login(request, user)
-        facebook_friends = _parse_facebook_friends(request)
-
-    return redirect(reverse('home'))
+        if user:
+            user = authenticate(username=user.email)
+            login(request, user)
+            facebook_friends = _parse_facebook_friends(request)
+    if new_prediction:
+        return redirect(reverse('logged_in'))
     
 
 def notify_signedup(request, uid):
