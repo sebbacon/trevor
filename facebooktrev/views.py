@@ -66,30 +66,18 @@ def _get_or_create_user(request, uid):
     return user
 
 
-@render('canvas.fbml')
+@render('redirect_canvas.fbml')
 @facebook.require_login()
 def redirect_canvas(request):
     fb = request.facebook
     uid = fb.uid
-    button = ('<fb:req-choice url="%s" label="Authorize My '
-              'Application" />') % APP_URL
-    has_authorized = _check_authorized(request, uid)
-    if has_authorized:
-        user = _get_or_create_user(request, uid)
-    show_condensed_table = True
-    current_page = request.GET.get('current_page', 1)
-    full_table_url = "%s?%s" % (APP_URL, "full=1")
-    predictions = Prediction.objects.filter(year=getThisYear())
-    predictions = predictions.order_by('-score', '-goaldiff', 'created_date')
-    predictions = predictions.all()
-    can_show_full_table = True
-    is_canvas = True
-    app_url = APP_URL
-    if request.GET.get('full', ''):
-        show_full_table = True
-        show_condensed_table = False
     return locals()
 
+@render('thankyou.fbml')
+def thankyou(request):
+    fb = request.facebook
+    uid = fb.uid
+    return locals()
 
 @render('canvas.fbml')
 @facebook.require_login()

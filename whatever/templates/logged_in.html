@@ -89,6 +89,9 @@
          <div class="league-table">
           <h3>Your position {% if request.user.get_facebook_friends.count %}against your friends{% endif %}
 </h3>
+	  {% if not request.user.get_facebook_friends.count %}
+	  <p><a href="{% url facebookinvite %}">Invite your friends to play Whatever Trevor via Facebook</a>, and you can compare yourself to them here!</p>
+	  {% endif %}
           <table class="league-table">
            <tr>
             <th>Pos</th>

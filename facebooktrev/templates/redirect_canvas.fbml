@@ -1,0 +1,11 @@
+{% extends 'facebookbase.html' %}
+
+{% block content %}
+
+<div class="box">
+ <h3>Thankyou</h3>
+ <p>We're currently developing a Facebook version - for now, you can only play at <a href="http://www.whatevertrevor.co.uk/">http://www.whatevertrevor.co.uk/</a>.
+ </p>
+</div>
+
+{% endblock %}

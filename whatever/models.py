@@ -95,10 +95,6 @@ class CustomUser(User):
             prediction__user=self)
 
     def get_facebook_friends(self):
-        #<h3>Your current position {{
-        #request.user.facebookuser.get.friends.count }}! {% if
-        #request.user.facebookuser.friends.count %}against your
-        #friends{% endif %}
         return self.facebookuser.get().friends.all()
     
     def __unicode__(self):
@@ -506,9 +502,12 @@ class RunningScore(Model):
         friends = self.user.facebookuser.get().friends.all()
         friend_ids = [self.user.id] + [x.user.id for x in friends]
         return self.in_context_with_rank(
-            user_subset_ids=friend_ids)
+            user_subset_ids=friend_ids,
+            start_count=0)
 
-    def in_context_with_rank(self, user_subset_ids=None):
+    def in_context_with_rank(self,
+                             user_subset_ids=None,
+                             start_count=None):
         from django.db import connection
         if not user_subset_ids:
             SQL = """
@@ -535,10 +534,12 @@ class RunningScore(Model):
             cursor = connection.cursor()
             args = [self.competition_id] + user_subset_ids
             cursor.execute(SQL_start, args)
+        if start_count is None:
+            start_count = max(0,self.current_position-5)
 
         return CursorGenerator(
             cursor,
-            start_count=max(0,self.current_position-5),
+            start_count=start_count,
             max_count=10,
             model_type=RunningScore
             )
@@ -779,9 +780,12 @@ class Prediction(Model):
         friends = self.user.facebookuser.get().friends.all()
         friend_ids = [self.user.id] + [x.user.id for x in friends]
         return self.in_context_with_rank(
-            user_subset_ids=friend_ids)
+            user_subset_ids=friend_ids,
+            start_count=0)
         
-    def in_context_with_rank(self, user_subset_ids=None):
+    def in_context_with_rank(self,
+                             user_subset_ids=None,
+                             start_count=None):
         from django.db import connection
         if not user_subset_ids:
             SQL = """
@@ -799,19 +803,20 @@ class Prediction(Model):
             goaldiff desc, edited_date) from whatever_prediction where
             competition_id = %s 
             """
-            join_word = " AND "
+            join_word = " AND ("
             for user_id in user_subset_ids:
                 SQL_start += join_word + " user_id = %s "
                 join_word = " OR "
-            SQL_start += " order by competition_id, rank"
+            SQL_start += ") order by competition_id, rank"
             cursor = connection.cursor()
             args = [self.competition_id] + user_subset_ids
             cursor.execute(SQL_start, args)
-            
+        if start_count is None:
+            start_count = max(0,self.current_position-5)
         return CursorGenerator(
             cursor,
-            start_count=max(0,self.current_position-5),
-            max_count=10,
+            start_count=start_count,
+            max_count=15,
             model_type=Prediction
             )
 

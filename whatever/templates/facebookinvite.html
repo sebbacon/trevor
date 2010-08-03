@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Invite your friends{% endblock %}
+
+{% block content %}
+
+<fb:serverFbml style="width: 755px;">
+ <script type="text/fbml">
+  <fb:fbml>
+   <fb:request-form
+      action="{{settings.FACEBOOK_APP_URL}}"
+      method="POST"
+      invite="true"
+      type="Whatever Trevor"
+      content="I've entered this easy game about football, and I'd like to compete against you. <fb:req-choice url='http://www.whatevertrevor.co.uk' label='Play' />">
+    <fb:multi-friend-selector
+      showborder="false"
+      actiontext="Invite your friends to pl\ay Whatever Trevor"
+      import_external_friends="false">
+   </fb:request-form>
+  </fb:fbml>
+ </script>
+</fb:serverFbml>
+
+{% endblock %}
+
+{% block sponsors %}
+{% endblock %}

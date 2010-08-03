@@ -559,6 +559,11 @@ def league_apply(request):
 def league_create(request):
     return locals()
 
+@render('facebookinvite.html')
+def facebookinvite(request):
+    return locals()
+
+
 def _get_facebook_cookie(cookies):
     api_key = settings.FACEBOOK_API_KEY
     if api_key not in cookies:
