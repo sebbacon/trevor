@@ -82,6 +82,6 @@ class Command(NoArgsCommand):
                     position += 1
             
 
-        if count:
+        if count and False:
             print "Calculated %d scores in %f seconds" % (count, time.time() - start)
             print "(%f per second)" % (count/(time.time()-start))
