@@ -38,8 +38,6 @@ class Command(NoArgsCommand):
             p.calculateGoalDiff()
             p.needs_update = False
             p.save()
-            if p.included_in_meta_competition == False:
-                print p.competition.competition_date, now
             if p.included_in_meta_competition == False\
                    and p.competition.competition_date < now:
                 running_score, _ = models.RunningScore.objects\
