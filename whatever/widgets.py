@@ -39,7 +39,7 @@ class HiddenSelectMultiple(forms.CheckboxSelectMultiple):
                            label_for,
                            rendered_field,
                            option_label))
-        output.append(u'</ul>')
+        output.append(u'</ol>')
         return mark_safe(u'\n'.join(output))
 
     def id_for_label(self, id_):
