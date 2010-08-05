@@ -5,7 +5,6 @@ from itertools import chain
 import cgi
 import hashlib
 import urllib
-
 import simplejson as json
 
 from django.shortcuts import render_to_response
@@ -18,6 +17,8 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
+
+from facebook import FacebookError
 
 from models import RegistrationProfile, Prediction, CustomUser
 from models import LeagueJoinStates
@@ -637,18 +638,21 @@ def signup_via_facebook(request,
     
 
 def notify_signedup(request, uid):
-    fb = request.facebook
-    message = "just joined WhatEverTrevor"
-    attachment = {'name':"WhatEverTrevor's premier league",
-                  'href':"http://www.whatevertrevor.co.uk/",
-                  'caption':'{*actor*} ' + message,
-                  'description':('WhatEverTrevor is a free game '
-                                 'about football, with a jackpot prize')}
-    news = [{'message':"@:%s %s" % (uid, message)}]
-    fb.dashboard.addNews(news,
-                         uid=uid)
-    fb.stream.publish(attachment=attachment,
-                      uid=uid)
+    try:
+        fb = request.facebook
+        message = "just joined WhatEverTrevor"
+        attachment = {'name':"WhatEverTrevor's premier league",
+                      'href':"http://www.whatevertrevor.co.uk/",
+                      'caption':'{*actor*} ' + message,
+                      'description':('WhatEverTrevor is a free game '
+                                     'about football, with a jackpot prize')}
+        news = [{'message':"@:%s %s" % (uid, message)}]
+        fb.dashboard.addNews(news,
+                             uid=uid)
+        fb.stream.publish(attachment=attachment,
+                          uid=uid)
+    except FacebookError:
+        pass            
 
 
 def signup(request):
