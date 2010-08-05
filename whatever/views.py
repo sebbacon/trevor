@@ -628,7 +628,7 @@ def signup_via_facebook(request,
             _setup_initial_prediction(user,
                                       session['prediction'],
                                       session['competition'])
-        notify_signedup(request, uid)
+            notify_signedup(request, uid)
         if user:
             user = authenticate(username=user.email)
             login(request, user)
