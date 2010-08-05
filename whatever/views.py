@@ -17,6 +17,7 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
+from django.contrib import messages
 
 from facebook import FacebookError
 
@@ -595,11 +596,15 @@ def _get_facebook_cookie(cookies):
         return {}
 
 def login_via_facebook(request):
-    signup_via_facebook(request)
-    return redirect(reverse('logged_in'))
+    user = signup_via_facebook(request)
+    if user:
+        return redirect(reverse('logged_in'))
+    else:
+        messages.error(request,
+                       "We don't have a record for that account")
+        return redirect(reverse('home'))
 
-def signup_via_facebook(request,
-                        new_prediction=True):
+def signup_via_facebook(request):
     fb_sig = _get_facebook_cookie(request.COOKIES)
     uid = fb_sig.get('uid', None)
     session = request.session
@@ -619,11 +624,13 @@ def signup_via_facebook(request,
                     first_name=profile['first_name'],
                     last_name=profile['last_name'],
                     is_active=True)
-        try:
-            fbuser = FacebookUser.objects.get(user=user)
-        except FacebookUser.DoesNotExist:
-            fbuser = FacebookUser.objects.create(uid=uid,
-                                                 user=user)
+        if user:
+            try:
+                fbuser = FacebookUser.objects.get(user=user)
+            except FacebookUser.DoesNotExist:
+                fbuser = FacebookUser.objects.create(uid=uid,
+                                                     user=user)
+                
         if session.has_key('prediction'):
             _setup_initial_prediction(user,
                                       session['prediction'],
@@ -633,8 +640,10 @@ def signup_via_facebook(request,
             user = authenticate(username=user.email)
             login(request, user)
             facebook_friends = _parse_facebook_friends(request)
-    if new_prediction:
-        return redirect(reverse('logged_in'))
+        if session.has_key('prediction'):
+            return redirect(reverse('logged_in'))
+    else:
+        return user
     
 
 def notify_signedup(request, uid):

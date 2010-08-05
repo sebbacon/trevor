@@ -69,6 +69,7 @@ MIDDLEWARE_CLASSES = (
     'middleware.GoogleAnalyticsMiddleware',
     'facebook.djangofb.FacebookMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
 )
 
 ROOT_URLCONF = 'urls'
