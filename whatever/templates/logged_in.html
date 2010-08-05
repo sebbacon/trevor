@@ -88,9 +88,13 @@
 	{% if comp.my_prediction %}
          <div class="league-table">
           <h3>Your position {% if request.user.get_facebook_friends.count %}against your friends{% endif %}
-</h3>
-	  {% if not request.user.get_facebook_friends.count %}
-	  <p><a href="{% url facebookinvite %}">Invite your friends to play Whatever Trevor via Facebook</a>, and you can compare yourself to them here!</p>
+	  </h3>
+	  {% if request.user.facebookuser.get %}
+	   {% if not request.user.get_facebook_friends.count %}
+	   <p><a href="{% url facebookinvite %}">Invite your friends to play Whatever Trevor via Facebook</a>, and you can compare yourself to them here!</p>
+	   {% else %}
+	   <p><a href="{% url facebookinvite %}">Invite more friends to play Whatever Trevor via Facebook</a></p>
+           {% endif %}
 	  {% endif %}
           <table class="league-table">
            <tr>
