@@ -641,9 +641,8 @@ def signup_via_facebook(request):
             login(request, user)
             facebook_friends = _parse_facebook_friends(request)
         if session.has_key('prediction'):
-            return redirect(reverse('logged_in'))
-    else:
-        return user
+            return redirect(reverse('logged_in'))    
+    return user
     
 
 def notify_signedup(request, uid):
