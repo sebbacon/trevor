@@ -608,11 +608,11 @@ def signup_via_facebook(request):
     fb_sig = _get_facebook_cookie(request.COOKIES)
     uid = fb_sig.get('uid', None)
     session = request.session
+    user = None
     if uid and uid != "None":        
         profile = json.load(urllib.urlopen(
             'https://graph.facebook.com/me?access_token=%s'\
             % fb_sig['access_token']))
-        user = None
         try:
             user = CustomUser.objects.get(email=profile['email'])
         except CustomUser.DoesNotExist:
