@@ -6,6 +6,7 @@ import cgi
 import hashlib
 import urllib
 import simplejson as json
+import csv
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect as redirect
@@ -810,6 +811,20 @@ def process_email_queue(request):
     for email in emails:
         print email.get_body()
     
+
+def user_csv(request):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] =\
+                    'attachment; filename=trevorusers.csv'
+    if request.user.is_superuser:
+        writer = csv.writer(response)
+        for user in CustomUser.objects.filter(is_active=True,
+                                              can_email=True):
+            writer.writerow([user.first_name,
+                             user.last_name,
+                             user.email,
+                         user.last_login])
+    return response
 
 def logout_view(request):
     logout(request)

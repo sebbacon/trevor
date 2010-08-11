@@ -66,6 +66,9 @@ urlpatterns = patterns('whatever',
     url(r'^reset/(?P<key>\w+)/$',
         views.reset_password,
         name="reset_password"),
+    url(r'^trevorusers.csv$',
+        views.user_csv,
+        name="user_csv"),
                        
     # leagues
     url(r'^add_league/$',
