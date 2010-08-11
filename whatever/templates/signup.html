@@ -10,6 +10,7 @@
  <div class="facebookregister">
   <p>The easiest way to get started is to sign up using Facebook.  If you prefer, or you don't use Facebook, you can <a href="#" id="nonfacebookregister">register directly with our site</a> instead.</p>
   <fb:login-button v="2" size="large" onlogin="window.location.href='{% url signup_via_facebook %}';" perms="email,publish_stream">Signup using your Facebook profile</fb:login-button>
+   <p>By registering you are agreeing to our <a href="/terms/">terms and conditions</a></p>
  </div>
  <div class="nonfacebookregister"> 
  {% if form.non_field_errors %}
