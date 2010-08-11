@@ -31,6 +31,7 @@ from models import RunningScore
 from models import EmailMessage
 from models import STATE_ACCEPTED, STATE_INVITED, STATE_APPLIED
 from models import STATE_REJECTED, STATE_DECLINED
+from models import date_joined_histogram, date_logged_in_histogram
 from forms import PredictionForm, UserForm, LeagueForm, NewLeagueForm
 from forms import PredictionPasswordForm
 from forms import NewPasswordForm
@@ -839,3 +840,9 @@ def logout_view(request):
         for prefix in prefixes:
             response.delete_cookie(prefix)
     return response
+
+@render('statistics.html')
+def statistics(request):
+    joined_histogram = date_joined_histogram()
+    logged_in_histogram = date_logged_in_histogram()
+    return locals()

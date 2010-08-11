@@ -1032,3 +1032,27 @@ def queue_movement_email(sender, **kwargs):
     email.save()
         
 position_changed.connect(queue_movement_email)
+
+def date_joined_histogram(previous_days=120):
+    from django.db import connection
+    sql = ("SELECT to_char(auth_user.date_joined, 'DD Mon') AS shortdate, "
+           "COUNT(*), DATE_TRUNC('day', auth_user.date_joined) AS date "
+           "FROM auth_user WHERE is_active = True "
+           "AND auth_user.date_joined > now() - interval '%s days' "
+           "GROUP BY date, shortdate "
+           "ORDER BY date;")
+    cursor = connection.cursor()
+    cursor.execute(sql, [previous_days])
+    return cursor
+
+def date_logged_in_histogram(previous_days=120):
+    from django.db import connection
+    sql = ("SELECT to_char(auth_user.last_login, 'DD Mon') AS shortdate, "
+           "COUNT(*), DATE_TRUNC('day', auth_user.last_login) AS date "
+           "FROM auth_user WHERE is_active = True "
+           "AND auth_user.last_login > now() - interval '%s days' "
+           "GROUP BY date, shortdate "
+           "ORDER BY date;")
+    cursor = connection.cursor()
+    cursor.execute(sql, [previous_days])
+    return cursor

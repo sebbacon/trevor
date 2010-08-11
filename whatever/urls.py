@@ -95,5 +95,11 @@ urlpatterns = patterns('whatever',
     url(r'^reject/(?P<league>.+)/(?P<email>.+)/$',
         views.reject_league_application,
         name="reject_league_application"),
+
+    # statistics
+    url(r'^statistics/$',
+        views.statistics,
+        name="statistics"),
+
 )
 
