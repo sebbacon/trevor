@@ -25,7 +25,6 @@ class Command(BaseCommand):
 
         transaction.enter_transaction_management()
         transaction.managed(True)
-
         this_year = utils.getThisYear()
         last_year = utils.getLastYear()
         table = scrape.parseTable(this_year)

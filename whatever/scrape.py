@@ -2,6 +2,7 @@
 
 import urllib2
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 #import settings
 from datetime import timedelta
 
@@ -12,7 +13,7 @@ LAST_YEAR_FAKE = [u'Manchester United', u'Liverpool', u'Chelsea', u'Arsenal', u'
 THIS_YEAR_FAKE = [u'Chelsea', u'Tottenham Hotspur', u'Manchester United', u'Manchester City', u'Stoke City', u'Arsenal', u'Liverpool', u'Aston Villa', u'Sunderland', u'Burnley', u'West Ham United', u'Birmingham City', u'Wolverhampton Wanderers', u'Hull City', u'Fulham', u'Everton', u'Wigan Athletic', u'Blackburn Rovers', u'Bolton Wanderers', u'Portsmouth']
 
 
-URL_TEMPLATE = "http://en.wikipedia.org/wiki/%s–%s_Premier_League?a=2"
+URL_TEMPLATE = "http://en.wikipedia.org/wiki/%s–%s_Premier_League?a=%d"
 
 def parseTable(year):
     if settings.OFFLINE:
@@ -20,7 +21,8 @@ def parseTable(year):
     else:
         next_year = year + timedelta(366)
         url = URL_TEMPLATE % (year.strftime("%Y"),
-                              next_year.strftime("%y"))
+                              next_year.strftime("%y"),
+                              datetime.now().microsecond)
         request = urllib2.Request(url)
         request.add_header("User-Agent",
                            "WhateverTrevor/0.1 +http://whatevertrevor.com")
@@ -31,10 +33,18 @@ def parseTable(year):
         anchor = soup.find(True, {"id":"League_table"})
         table = anchor.findAllNext("table")
         teams = []
+        rowspan = 0
         for row in table[0].findAll("tr")[1:]:
             cells = row.findAll("td")
-            position, team = cells[0].string, cells[1].a.string
+            if rowspan:
+                # two teams, equal position
+                team = cells[0].a.string
+                rowspan = rowspan - 1
+            else:
+                position, team = cells[0].string, cells[1].a.string
             teams.append(team.title())
+            if cells[0].get('rowspan'):
+                rowspan = int(cells[0].get('rowspan')) - 1
         return teams
 
 
