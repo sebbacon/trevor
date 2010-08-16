@@ -274,7 +274,7 @@ class Position(Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.position)
+        return "%s on %s" % (str(self.position), self.date.strftime("%d/%m"))
 
     def invert_position(self):
         return 0 - self.position

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Stats{% endblock %}
+
+{% block content %}
+
+<h2>Manager</h2>
+
+<ul>
+ <li>
+  <a href="{% url statistics %}">Stats</a>
+ </li>
+ <li>
+  <a href="{% url user_csv %}">User CSV</a>
+ </li>
+ <li>
+  <a href="{% url campaignmonitor %}">Campaign monitor</a> (broken)
+ </li>
+</ul>
+{% endblock %}

@@ -96,10 +96,6 @@ urlpatterns = patterns('whatever',
         views.reject_league_application,
         name="reject_league_application"),
 
-    # statistics
-    url(r'^statistics/$',
-        views.statistics,
-        name="statistics"),
 
 )
 

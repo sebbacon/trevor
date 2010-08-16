@@ -101,7 +101,8 @@ INSTALLED_APPS = (
     'south',
     'whatever',
     'holding',
-    'facebooktrev'
+    'facebooktrev',
+    'manager'
 )
 
 AUTHENTICATION_BACKENDS = ('backends.NoAuthBackend',
@@ -136,6 +137,8 @@ CURRENT_COMPETITION_ID = 5 # the default competition entered on the
 PREVIOUS_COMPETITION_ID = 2 
 FIRST_COMPETITION_ID = 1
 CLOSE_SEASON = True
+CAMPAIGN_MONITOR_KEY = "744f528619f20ce0537a4b2cb6a0e879"
+CAMPAIGN_MONITOR_LIST = "8b86d0c47ac402db792f58e504e9e5d0"
 try:
     from local_settings import *
 except ImportError:

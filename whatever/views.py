@@ -840,9 +840,3 @@ def logout_view(request):
         for prefix in prefixes:
             response.delete_cookie(prefix)
     return response
-
-@render('statistics.html')
-def statistics(request):
-    joined_histogram = date_joined_histogram()
-    logged_in_histogram = date_logged_in_histogram()
-    return locals()

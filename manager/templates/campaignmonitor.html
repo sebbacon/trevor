@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Stats{% endblock %}
+
+{% block content %}
+
+<h2>Campaign manager export</h2>
+
+{% if failure %}
+ Didn't export:
+ <ul>
+  {% for f in failure %}
+   <li>{{ f }}</li>
+  {% endfor %}
+ </ul>
+{% endif %}
+<form method="post">
+<input type="submit" name="export" value="export" />
+</form>
+
+{% endblock %}
