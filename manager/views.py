@@ -52,6 +52,8 @@ def user_csv(request):
 
 @render('campaignmonitor.html')
 def campaignmonitor(request):
+    if not request.user.is_superuser:
+        return locals()
     if request.method == "POST" and request.POST.get('export'):
         success = failure = []
         mailable_users = CustomUser.objects.filter(can_email=True,
