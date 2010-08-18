@@ -303,14 +303,18 @@ def closed_competitions(request):
         return redirect(reverse('make_prediction'))
 
 @render('competition.html')
-def competition(request, competition=None):
+def competition(request, competition=None, email=None):
+    if email:
+        user = CustomUser.objects.get(email=email)
+    else:
+        user = request.user
     competition = Competition.objects.get(pk=competition)
     current = getCurrentTable()
     last = getPreviousTable(competition=competition)
     try:
         prediction = Prediction.objects\
                      .filter(competition=competition,
-                             user=request.user).get()
+                             user=user).get()
         predictions = prediction.in_context()
         entered = True
     except Prediction.DoesNotExist:
@@ -322,16 +326,6 @@ def competition(request, competition=None):
         entered = False
     final = prediction.last_used_table
     max_goal_diff = current.max_goal_diff(last)
-    #leagues = request.user.leagues_by_state(STATE_ACCEPTED)
-    #if leagues.count():
-    #    leagues_padding = list("x" * (3 - leagues.count() % 3))
-    #else:
-    #    leagues_padding = []
-    #my_leagues = leagues.filter(owner=request.user)
-    #applied_to_join = request.user.leagues_by_state(STATE_APPLIED)
-    #need_approval = LeagueJoinStates.objects.filter(
-    #    state=STATE_APPLIED,
-    #    league__in=my_leagues)
     return locals()
 
 
