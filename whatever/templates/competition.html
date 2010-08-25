@@ -3,17 +3,21 @@
 
 {% block content %}
 <div class="titleheader">
+{% if not email %}
 <h1>{{ competition.name }}</h1>
 <h2>Predict the table at {{ competition.competition_date|date:"H:m" }} on {{ competition.competition_date|date:"jS F" }}. {{ competition.upcoming_fixtures.count }} fixtures will be played between now and then.</p>
  </h2>
  <p><a href="{% url logged_in %}">Back to competition summary</a></p>
+{% else %}
+<h1>{{ competition.name }}: {{user.display_name}}'s selection</h1>
+{% endif %}
 </div>
 <div class="row">
  <div class="span-1">
   <div class="panel">
    {% if entered %}
-   <h2>My selection</h2>
-   <p>The greener it is, the closer your selection is to current reality</p>
+   <h2>{% if email %}{{user.display_name}}'s{% else %}My{% endif %} selection</h2>
+   <p>The greener the team, the closer the selection is to the current table</p>
    <div id="personal-selection">
     <ol>
     {% for p in prediction.decorated_teams %}
@@ -21,11 +25,15 @@
     {% endfor %}
     </ol>
    <p class="red">
-    Your points: <strong>{{ prediction.score }}</strong><br />
-    Your goal diff: <strong>{{ prediction.goaldiff }}</strong>
+    {% if email %}{{user.display_name}}'s{% else %}My{% endif %}
+ points: <strong>{{ prediction.score }}</strong><br />
+    {% if email %}{{user.display_name}}'s{% else %}My{% endif %}
+ goal diff: <strong>{{ prediction.goaldiff }}</strong>
     <br />
-    {% if competition.is_open %}
-     <a href="{% url make_prediction competition=competition.pk %}">Change selection</a>
+    {% if not email %}
+     {% if competition.is_open %}
+      <a href="{% url make_prediction competition=competition.pk %}">Change selection</a>
+     {% endif %}
     {% endif %}
    </p>
    </div>
@@ -78,7 +86,7 @@
  </div>
  <div class="span-2 last">
   <div class="panel">
-  <h2>{% if entered %}My league position{% else %}League{% endif %}</h2>
+  <h2>{% if entered %}{% if email %}{{user.display_name}}'s{% else %}My{% endif %} league position{% else %}League{% endif %}</h2>
    <table class="league-table">
     <tr>
      <th>Pos</th>
@@ -101,7 +109,7 @@
   <p><a href="{% url table competition=competition.pk %}">See full table</a></p>
   </div>
  <div class="panel" style="margin-top: 30px">
-  <h2>{% if entered %}My{% else %}Current winner's{% endif %} league performance</h2>
+  <h2>{% if entered %}{% if email %}{{user.display_name}}'s{% else %}My{% endif %}{% else %}Current winner's{% endif %} league performance</h2>
   <div id="performancechart" style="width: 360px"></div>
   <p>There are {{ competition.upcoming_fixtures.count }} fixtures yet to be played between now and the competition date.</p>
   </div>
