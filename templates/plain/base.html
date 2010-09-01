@@ -96,10 +96,10 @@
      <div id="actions" class="span-1 last">
       {% block actions %}
       <ul>
-       {% if user.is_anonymous %}
+       {% if request.user.is_anonymous %}
        <li id="loginlink"><a href="">Sign in</a></li>
        {% else %}
-       <li>Hi, {{ user.display_name }} <a href="{% url logout %}">Sign out</a></li>
+       <li>Hi, {{ request.user.display_name }} <a href="{% url logout %}">Sign out</a></li>
        {% endif %}
       </ul>
       {% endblock %}
