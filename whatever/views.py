@@ -303,11 +303,18 @@ def closed_competitions(request):
         return redirect(reverse('make_prediction'))
 
 @render('competition.html')
-def competition(request, competition=None, email=None):
+def competition(request, competition=None, email=None, userid=None):
     if email:
         user = CustomUser.objects.get(email=email)
+    elif userid:
+        user = CustomUser.objects.get(id=userid)
+        email = user.email
     else:
         user = request.user
+    if user.is_anonymous():
+        messages.error(request,
+                       "You must be logged in to view the competition")
+        return redirect(reverse('home'))
     competition = Competition.objects.get(pk=competition)
     current = getCurrentTable()
     last = getPreviousTable(competition=competition)
@@ -369,7 +376,7 @@ def add_or_edit_league(request, league=None):
                         # not to join (or have been rejected from)
                         leagues = leagues.exclude(
                             leaguejoinstates__state=STATE_REJECTED,
-                            leaguejoinstates__state=STATE_DECLINED,
+                            #leaguejoinstates__state=STATE_DECLINED,
                             leaguejoinstates__user=user
                             )
                         if leagues:
