@@ -9,7 +9,7 @@ class PredictionAdmin(admin.ModelAdmin):
     
 class UserAdmin(admin.ModelAdmin):
     list_display = ('email', 'first_name', 'last_name',
-                    'is_active', 'last_login', 'date_joined')
+                    'is_active', 'login_count', 'last_login', 'date_joined')
     list_filter = ('is_active','is_superuser')
     search_fields = ('first_name', 'last_name', 'email')
 
